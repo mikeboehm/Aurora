@@ -5,6 +5,8 @@ import time
 #import console
 import sys
 import math
+import AuroraSunrise
+import AuroraLights
 
 import os
 os.system('clear')
@@ -14,14 +16,12 @@ print ' ' * 22 + 'Aurora'
 print '=' * 50
 now = datetime.datetime.now()
 # monday_alarm = datetime.time(7,0,0)
-monday_alarm = datetime.datetime.now() + datetime.timedelta(hours=1,
-minutes=0, seconds=2)
+monday_alarm = datetime.datetime.now() + datetime.timedelta(hours=1, minutes=0, seconds=2)
 
 dawn_duration = datetime.timedelta(hours=1)
 shutoff_delay = datetime.timedelta(hours=1)
 
-today_alarm = datetime.datetime(now.year, now.month, now.day,
-monday_alarm.hour, monday_alarm.minute, monday_alarm.second)
+today_alarm = datetime.datetime(now.year, now.month, now.day, monday_alarm.hour, monday_alarm.minute, monday_alarm.second)
 shutoff = today_alarm + shutoff_delay
 dawn_begin = today_alarm - dawn_duration
 
@@ -32,25 +32,44 @@ print 'Now \t' + str(now)
 # Determines the colour of the lights
 def light_colour(seconds_in, dawn_duration):
 	#	print dawn_duration
-	print seconds_in / dawn_duration / 256
-	# Determines whether we're in dawn mode
 
-def is_alarm_happening(now, today_alarm, dawn_begin, dawn_duration):
-	diff = now - dawn_begin
-	#	print math.floor(diff.total_seconds())
+# 	print seconds_in / dawn_duration
+ 	print seconds_in
+
+def update_settings():
+#	update settings
+	pass
+
+
+"""
+	asd
+
+"""
+
+lights = AuroraLights.Lights()
+
+sunrise = AuroraSunrise.Sunrise()
+
+today_sunrise = sunrise.sunrise()
+today_dawn = sunrise.dawn()
+today_shutoff = sunrise.shutoff()
+print '~' * 20
+print today_dawn
+print today_sunrise
+print today_shutoff
+
 	
-	if now >= dawn_begin and now <= today_alarm:
-		light_colour(math.floor(diff.total_seconds()), dawn_duration.total_seconds())
-		message = 'Alarm is happening!'
-	elif now <= dawn_begin:
-		message = 'Still to come'
-	else:
-		message = 'Already happened'
-
 # Main loop
 a = 0
-while a < 5:
-	a = a + 1
-	now = datetime.datetime.now()
-	is_alarm_happening(now, today_alarm, dawn_begin, dawn_duration)
+while a < 3000:
+	a += 1
+	progress = sunrise.stage()
+	if progress:
+		lights.set_sunrise_colour(progress)
+	# if switch_pressed:
+		# toggle light
+	# if sunrising:
+		# set_light
+	# start_delay()
+	
 	time.sleep(1)
