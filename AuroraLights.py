@@ -18,7 +18,7 @@ class Lights(object):
 			colour = self.phase_one(progress)
 		else:
 			colour = self.phase_two(progress)
-
+		
 		self.set_lights(colour)
 		
 	def test(self):
@@ -28,7 +28,12 @@ class Lights(object):
 	def phase_one(self, progress):
 # 		print '=' * 10 + ' phase_one() ' + '=' * 10
 		# rgb(255,0,0)		
-		red = (255/100)* (progress*2)
+		
+		# Factor in that progress within phase_one() will only go as high as 50
+		progress = (progress / 50) * 100
+		
+		red = float(255)/100
+		red *= progress
 		green = 0
 		blue = 0
 		
@@ -40,11 +45,14 @@ class Lights(object):
 	def phase_two(self, progress):
 # 		print '=' * 10 + ' phase_two() ' + '=' * 10
 		# rgb(255,255,255)
-		red = 255
-		green = (255/100)* (progress*2)
-		blue = (255/100)* (progress*2)
+		# Factor in that progress within phase_two() will start at >50
+		progress = (progress - 50) * 2
 		
-		colour = {red: red, green: green, blue: blue}
+		red = 255
+		green = (float(255)/100)* progress
+		blue = (float(255)/100)* progress
+		
+		colour = {'red': red, 'green': green, 'blue': blue}
 		
 		return colour
 		
