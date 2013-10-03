@@ -42,7 +42,13 @@ def update_settings():
 
 
 """
-	asd
+	Alarm
+		Do Alarm
+		Update settings
+		Timer thread with callback
+	Lamp
+		Toggle lamp
+		Toggle state
 
 """
 
