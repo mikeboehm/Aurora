@@ -10,8 +10,9 @@ class Alarm(object):
 
 	def parse_time(self, hour, minute):
 		if(self.test_mode):
+			print 'test mode'
 #			dawn_duration = datetime.timedelta(hours=1, minutes=0, seconds=0)
- 			dawn_duration = datetime.timedelta(hours=0, minutes=2, seconds=0)
+ 			dawn_duration = datetime.timedelta(hours=0, minutes=30, seconds=0)
 			now = datetime.datetime.now()
 			alarm = datetime.datetime.now() + dawn_duration + datetime.timedelta(hours=0, minutes=0, seconds=2)
 			hour = alarm.hour

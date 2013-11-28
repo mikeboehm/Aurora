@@ -7,9 +7,15 @@ import sys
 import math
 import AuroraSunrise
 import AuroraLights
+import RPi.GPIO as GPIO
 
 import os
 os.system('clear')
+
+# Setup GPIO for reading light button
+GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
+BUTTON_1 = 17           # Sets our input pins
+GPIO.setup(BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set our input pin to be an input, with internal pullup resistor on
 
 print '=' * 50
 print ' ' * 22 + 'Aurora'
@@ -60,22 +66,27 @@ today_sunrise = sunrise.sunrise()
 today_dawn = sunrise.dawn()
 today_shutoff = sunrise.shutoff()
 print '~' * 20
-print today_dawn
-print today_sunrise
-print today_shutoff
+print 'dawn: ' + str(today_dawn)
+print 'sunrise: ' + str(today_sunrise)
+print 'shutoff: ' + str(today_shutoff)
 
+
+# Set bounce time to be higher than the time it takes for the callback to return
+# http://www.raspberrypi.org/phpBB3/viewtopic.php?f=32&t=40891
+GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=lights.toggle_light_callback, bouncetime=3000)
+# time.sleep(60)
 	
 # Main loop
 a = 0
-while a < 3000:
+while a < 3000000:
 	a += 1
+# 	lights.toggle_light()
+	
+	
 	progress = sunrise.stage()
+	print progress
 	if progress:
 		lights.set_sunrise_colour(progress)
-	# if switch_pressed:
-		# toggle light
-	# if sunrising:
-		# set_light
-	# start_delay()
-	
-	time.sleep(1)
+		time.sleep(0.5)
+	else: 
+		time.sleep(1)

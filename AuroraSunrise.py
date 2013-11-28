@@ -92,7 +92,7 @@ class Sunrise(object):
 		# Dawn has begun
 		if now >= self.dawn_time and now <= self.sunrise_time:			
 			progress = self.progress(seconds_into_dawn)
-# 			print 'sun is rising ' + str(progress)
+			print 'sun is rising ' + str(progress)
 		# The sun has risen
 		elif now > self.sunrise_time and now <= self.shutoff_time:
 			progress = self.progress(seconds_into_dawn)
