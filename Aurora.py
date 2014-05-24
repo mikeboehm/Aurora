@@ -92,7 +92,7 @@ GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=lights.toggle_light_callb
 	
 # Main loop
 a = 0
-while a < 3000000:
+while True:
 	a += 1
 # 	lights.toggle_light()
 	
