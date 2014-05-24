@@ -26,7 +26,7 @@ class settings(object):
 		# Read alarms from settings
 		monday_hour = self.config.get('Monday', 'hour')
 		monday_minute = self.config.get('Monday', 'minute')		
-		monday_alarm = AuroraAlarm.Alarm(monday_hour, monday_minute, True)
+		monday_alarm = AuroraAlarm.Alarm(monday_hour, monday_minute, False)
 		
 		# Get datetime objects from alarms
 		monday_alarm = monday_alarm.alarm_datetime

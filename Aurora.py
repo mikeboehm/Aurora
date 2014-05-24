@@ -72,8 +72,10 @@ def update_settings():
 
 """
 
+# Instantiate lights object
 lights = AuroraLights.Lights()
 
+# Instantiate 
 sunrise = AuroraSunrise.Sunrise()
 
 today_sunrise = sunrise.sunrise()
@@ -89,18 +91,22 @@ print 'shutoff: ' + str(today_shutoff)
 # http://www.raspberrypi.org/phpBB3/viewtopic.php?f=32&t=40891
 GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=lights.toggle_light_callback, bouncetime=3000)
 # time.sleep(60)
-	
-# Main loop
-a = 0
-while True:
-	a += 1
-# 	lights.toggle_light()
-	
-	
-	progress = sunrise.stage()
-	print progress
-	if progress:
-		lights.set_sunrise_colour(progress)
-		time.sleep(0.5)
-	else: 
-		time.sleep(1)
+
+try:	
+	# Main loop
+	a = 0
+	while True:
+		a += 1
+	# 	lights.toggle_light()
+		progress = sunrise.stage()
+		print progress
+		if progress:
+			lights.set_sunrise_colour(progress)
+			time.sleep(0.5)
+		else: 
+			time.sleep(10)
+
+except KeyboardInterrupt:
+	print '#' * 10 + ' Exiting ' + '#' * 10
+	lights.turn_off()
+	GPIO.cleanup()
