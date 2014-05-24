@@ -12,6 +12,20 @@ import RPi.GPIO as GPIO
 import os
 os.system('clear')
 
+
+### GPIO Hardware Pins ###
+#	1	3.3v
+#	3	SDA0		I2C	Data pin (SDA)
+#	5	SCL0		I2C Clock	(SCL)
+#	11	GPIO 0		Button/Switch
+#	14	GND
+
+###	PMW channels ###
+# 	4		Red Pin
+# 	5		Green Pin
+# 	6		Blue Pin
+
+
 # Setup GPIO for reading light button
 GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
 BUTTON_1 = 17           # Sets our input pins
