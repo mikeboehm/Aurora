@@ -10,7 +10,7 @@ class Lights(object):
 		self.blue_pin = 3
 
 		self.light_state = False
-		self.reading_light = {'red' : 256, 'green' : 256, 'blue' : 256}
+		self.reading_light = {'red' : 255, 'green' : 255, 'blue' : 255}
 		self.reading_light['red'] = self.reading_light['red'] * 16
 		self.reading_light['green'] = self.reading_light['green'] * 16
 		self.reading_light['blue'] = self.reading_light['blue'] * 16

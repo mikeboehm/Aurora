@@ -78,6 +78,7 @@ lights = AuroraLights.Lights()
 # Instantiate 
 sunrise = AuroraSunrise.Sunrise()
 
+# These are not used beyond this initial display
 today_sunrise = sunrise.sunrise()
 today_dawn = sunrise.dawn()
 today_shutoff = sunrise.shutoff()
