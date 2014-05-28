@@ -51,32 +51,14 @@ class Lights(object):
 		print self.reading_light['red']
 		start_time = time.time()
 		for x in range(0,4096, 16):
-# 			print x
-			red = self.reading_light['red'] / 4096 * x
-			green = self.reading_light['green'] / 4096 * x
-			blue = self.reading_light['blue'] / 4096 * x
+			red = float(self.reading_light['red']) / 4096.00 * x
+			green = float(self.reading_light['green']) / 4096.00 * x
+			blue = float(self.reading_light['blue']) / 4096.00 * x
+			print red
 #
-			self.pwm.setPWM(self.red_pin, 0 , red)
-			self.pwm.setPWM(self.green_pin, 0, green)
-			self.pwm.setPWM(self.blue_pin, 0, blue)
-
-# 		self.reading_light['red'] = int(red)
-# 		self.reading_light['green'] = int(green)
-# 		self.reading_light['blue'] = int(blue)
-
-# 		# Set max brightness at end of fade in
-# 		# For some reason the light is shutting off at the end of loop
-# 		self.pwm.setPWM(self.red_pin, 0 , self.reading_light['red'])
-# 		self.pwm.setPWM(self.green_pin, 0, self.reading_light['green'])
-# 		self.pwm.setPWM(self.blue_pin, 0, self.reading_light['blue'])
-
-# 		print self.reading_light['red']
-# 		print self.reading_light['green']
-# 		print self.reading_light['blue']
-
-# 		print "red: %d" % red
-# 		print "green: %d" % green
-# 		print "blue: %d" % blue
+			self.pwm.setPWM(self.red_pin, 0 , int(red))
+			self.pwm.setPWM(self.green_pin, 0, int(green))
+			self.pwm.setPWM(self.blue_pin, 0, int(blue))
 
 		elapsed_time = time.time() - start_time
 
