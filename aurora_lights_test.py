@@ -10,6 +10,9 @@ class TestAuroraLights(unittest.TestCase):
 	def setUp(self):
 		self.lights = AuroraLights.Lights()
 
+# 	def test_toggle_light(self):
+# 		self.lights.toggle_light_off()
+
 	def test_toggle_light(self):
 		self.lights.toggle_light(1)
 		time.sleep(1)
