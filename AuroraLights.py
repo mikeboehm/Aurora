@@ -15,8 +15,9 @@ class Lights(object):
 		self.reading_light['green'] = self.reading_light['green'] * 16
 		self.reading_light['blue'] = self.reading_light['blue'] * 16
 		print 'red: ' + str(self.reading_light['red'])
-
-
+		
+		self.colour = {'red' : 0, 'green': 0, 'blue': 0}
+		
 		self.pwm.setPWM(self.red_pin, 0 , 0)
 		self.pwm.setPWM(self.green_pin, 0, 0)
 		self.pwm.setPWM(self.blue_pin, 0, 0)
@@ -31,7 +32,7 @@ class Lights(object):
 	# Turns the reading light on and off
 	def toggle_light(self, channel):
 		print 'toggle_light'
-
+		start_time = time.time()
 # 		print self.light_state
 		if self.light_state:
  			self.toggle_light_off()
@@ -42,27 +43,23 @@ class Lights(object):
 			print "turning on"
 # 			self.light_state = True
 
+		elapsed_time = time.time() - start_time
+		print elapsed_time
+
+
 	# Turns reading light on
 	def toggle_light_on(self):
 		print 'toggle_light_on'
-# 		self.pwm.setPWM(self.red_pin, 0 , 2000)
-# 		time.sleep(0.2)
-# 		self.pwm.setPWM(self.red_pin, 0 , 0)
 		print self.reading_light['red']
-		start_time = time.time()
+		
 		for x in range(0,4096, 16):
 			red = float(self.reading_light['red']) / 4096.00 * x
 			green = float(self.reading_light['green']) / 4096.00 * x
 			blue = float(self.reading_light['blue']) / 4096.00 * x
-			print red
-#
-			self.pwm.setPWM(self.red_pin, 0 , int(red))
-			self.pwm.setPWM(self.green_pin, 0, int(green))
-			self.pwm.setPWM(self.blue_pin, 0, int(blue))
 
-		elapsed_time = time.time() - start_time
+			colour = {'red' : red, 'green' : green, 'blue' : blue}
+			self.set_lights(colour)
 
-		print elapsed_time
 # 		print x
 # 		print 'red: ' + str(red)
 		self.light_state = True
@@ -70,33 +67,20 @@ class Lights(object):
 
 	# Turns reading light off
 	def toggle_light_off(self):
-		start_time = time.time()
 		print 'toggle_light_off'
 		print self.reading_light['red']
 		print '#' * 20
-# 		self.pwm.setPWM(self.blue_pin, 0 , 2000)
-# 		time.sleep(0.2)
-# 		self.pwm.setPWM(self.blue_pin, 0 , 0)
+		
+		initial_colour = self.colour
+
 		for x in range (4096 ,-1, -16):
-			print x
-			print self.reading_light['red']
-			red = self.reading_light['red'] / 4096 * x
-			green = self.reading_light['green'] / 4096 * x
-			blue = self.reading_light['blue'] / 4096 * x
+			red = float(self.reading_light['red']) / 4096.00 * x
+			green = float(self.reading_light['green']) / 4096.00 * x
+			blue = float(self.reading_light['blue']) / 4096.00 * x
 			colour = {'red' : red, 'green' : green, 'blue' : blue}
 			self.set_lights(colour)
 
-# 			self.pwm.setPWM(self.red_pin, 0 , red)
-# 			self.pwm.setPWM(self.green_pin, 0, green)
-# 			self.pwm.setPWM(self.blue_pin, 0, blue)
-
-# 		print x
-		print 'red: ' + str(red)
 		self.light_state = False
-		elapsed_time = time.time() - start_time
-
-		print elapsed_time
-
 
 	# Sets the light relative to where we are in the sequence
 	def set_sunrise_colour(self, progress):
@@ -152,6 +136,8 @@ class Lights(object):
 		self.pwm.setPWM(self.red_pin, 0 , red)
 		self.pwm.setPWM(self.green_pin, 0, green)
 		self.pwm.setPWM(self.blue_pin, 0, blue)
+		
+		self.colour = colour;
 	
 	def turn_off(self):
 		colour = {'red': 0, 'green': 0, 'blue': 0}
