@@ -1,5 +1,6 @@
 from Adafruit_PWM_Servo_Driver import PWM
 import time
+import datetime
 class Lights(object):
 	def __init__(self):
 		self.pwm = PWM(0x40, debug=True)
@@ -142,3 +143,47 @@ class Lights(object):
 	def turn_off(self):
 		colour = {'red': 0, 'green': 0, 'blue': 0}
 		self.set_lights(colour)
+	
+	def get_lights(self):
+		return self.colour
+		
+	def fade(self, from_time, duration, end_colour):
+# 		Get current light colour
+# 
+# 		Calculate time till end
+# 			Now + duration = end_time
+# 			time till end = end_time - now
+# 		calculate colour
+		# Get current light colour
+# 		current_colour = self.get_lights()
+		
+		# Calculate time till end
+		# Now + duration = end_time
+		end_time = from_time + duration
+		
+		total_duration = duration.seconds * 1000000
+		print type(total_duration)
+		total_duration = float(total_duration)
+		print type(total_duration)
+		
+		while datetime.datetime.now() <= end_time:
+			current_colour = self.get_lights()
+			# time till end = end_time - now
+			diff = end_time - datetime.datetime.now()
+			remaining = (diff.seconds * 1000000) + diff.microseconds
+			print round(remaining/total_duration * 100,2)
+			print (end_colour['red'] - current_colour['red']
+# 			red_diff = ((end_colour['red'] - current_colour['red']) /100 * remaining)
+# 			print red_diff
+# 			colour = { 'red' : red_diff, 'green' : 0, 'blue': 0}			
+# 			self.set_lights(colour)
+			time.sleep(0.1)
+			
+	
+		print from_time
+		
+		print duration.seconds
+		print duration.microseconds
+		
+		end_time = from_time + duration
+		print end_time
