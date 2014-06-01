@@ -133,12 +133,29 @@ class Lights(object):
 		green = int(colour['green'])
 		blue = int(colour['blue'])
 
+		# Prevent out of range
+		if(red > 4095) :
+			red = 4095
+		if(green > 4095) :
+			green = 4095
+		if(blue > 4095) :
+			blue = 4095
+
+		# Prevent out of range
+		if(red < 0) :
+			red = 0
+		if(green < 0) :
+			green = 0
+		if(blue < 0) :
+			blue = 0
+
+
 		print 'R:' + str(red) + ', G:' + str(green) + ', B:' + str(blue)
 		self.pwm.setPWM(self.red_pin, 0 , red)
 		self.pwm.setPWM(self.green_pin, 0, green)
 		self.pwm.setPWM(self.blue_pin, 0, blue)
 		
-		self.colour = colour;
+		self.colour = {'red': red, 'green': green, 'blue' : blue}
 	
 	def turn_off(self):
 		colour = {'red': 0, 'green': 0, 'blue': 0}
@@ -160,23 +177,32 @@ class Lights(object):
 		# Calculate time till end
 		# Now + duration = end_time
 		end_time = from_time + duration
+
+		current_colour = self.get_lights()
+		diff_red = end_colour['red'] - current_colour['red']
+		diff_red = diff_red / 100
+		print 'Diff_red: ' + str(diff_red)
+		
 		
 		total_duration = duration.seconds * 1000000
 		print type(total_duration)
 		total_duration = float(total_duration)
 		print type(total_duration)
 		
-		while datetime.datetime.now() <= end_time:
-			current_colour = self.get_lights()
+		while datetime.datetime.now() <= end_time:			
 			# time till end = end_time - now
 			diff = end_time - datetime.datetime.now()
 			remaining = (diff.seconds * 1000000) + diff.microseconds
-			print round(remaining/total_duration * 100,2)
-			print (end_colour['red'] - current_colour['red']
+# 			print remaining
+			percent_remaining = round((remaining/total_duration) * 100,2)
+			
+			red = (100 - percent_remaining) * diff_red
+			print 'Red: ' + str(red);
+			
 # 			red_diff = ((end_colour['red'] - current_colour['red']) /100 * remaining)
 # 			print red_diff
-# 			colour = { 'red' : red_diff, 'green' : 0, 'blue': 0}			
-# 			self.set_lights(colour)
+			colour = { 'red' : red, 'green' : 0, 'blue': 0}			
+			self.set_lights(colour)
 			time.sleep(0.1)
 			
 	
