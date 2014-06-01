@@ -149,7 +149,6 @@ class Lights(object):
 		if(blue < 0) :
 			blue = 0
 
-
 		print 'R:' + str(red) + ', G:' + str(green) + ', B:' + str(blue)
 		self.pwm.setPWM(self.red_pin, 0 , red)
 		self.pwm.setPWM(self.green_pin, 0, green)
