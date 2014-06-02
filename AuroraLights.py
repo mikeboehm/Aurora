@@ -1,6 +1,7 @@
 from Adafruit_PWM_Servo_Driver import PWM
 import time
 import datetime
+import math
 class Lights(object):
 	def __init__(self):
 		self.pwm = PWM(0x40, debug=True)
@@ -149,7 +150,7 @@ class Lights(object):
 		if(blue < 0) :
 			blue = 0
 
-		print 'R:' + str(red) + ', G:' + str(green) + ', B:' + str(blue)
+# 		print 'R:' + str(red) + ', G:' + str(green) + ', B:' + str(blue)
 		self.pwm.setPWM(self.red_pin, 0 , red)
 		self.pwm.setPWM(self.green_pin, 0, green)
 		self.pwm.setPWM(self.blue_pin, 0, blue)
@@ -162,7 +163,7 @@ class Lights(object):
 	
 	def get_lights(self):
 		return self.colour
-		
+	
 	def fade(self, from_time, duration, end_colour):
 # 		Get current light colour
 # 
@@ -178,16 +179,16 @@ class Lights(object):
 		end_time = from_time + duration
 
 		current_colour = self.get_lights()
-		diff_red = end_colour['red'] - current_colour['red']
-		diff_red = diff_red / 100
-		print 'Diff_red: ' + str(diff_red)
-		
+
+		diff_red = (end_colour['red'] - current_colour['red']) / 100.00
+		print str(end_colour['red']) + ' - ' + str(current_colour['red']) + ' / 100 = ' + str(diff_red)
+		diff_red_absolute = math.fabs(diff_red)
 		
 		total_duration = duration.seconds * 1000000
-		print type(total_duration)
 		total_duration = float(total_duration)
-		print type(total_duration)
 		
+		print '=' * 10 + ' Start fade loop ' + '=' * 10
+		start_time = time.time()
 		while datetime.datetime.now() <= end_time:			
 			# time till end = end_time - now
 			diff = end_time - datetime.datetime.now()
@@ -195,15 +196,22 @@ class Lights(object):
 # 			print remaining
 			percent_remaining = round((remaining/total_duration) * 100,2)
 			
-			red = (100 - percent_remaining) * diff_red
-			print 'Red: ' + str(red);
+			if(diff_red < 0) :
+				red = percent_remaining * diff_red_absolute				
+# 				print 'diff_red < 0: red: ' + str(red)
+			else:
+				red = (100 - percent_remaining) * diff_red_absolute
 			
 # 			red_diff = ((end_colour['red'] - current_colour['red']) /100 * remaining)
 # 			print red_diff
 			colour = { 'red' : red, 'green' : 0, 'blue': 0}			
 			self.set_lights(colour)
 			time.sleep(0.1)
-			
+		end_time = time.time()
+		print '=' * 10 + ' Elapsed ' + '=' * 10
+		print end_time - start_time
+		print '=' * 10 + ' end fade loop ' + '=' * 10
+		self.set_lights(end_colour)
 	
 		print from_time
 		
