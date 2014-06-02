@@ -85,6 +85,25 @@ class TestAuroraLights(unittest.TestCase):
 		self.lights.fade(from_time, duration, end_colour)
 		finished = self.lights.get_lights()
 		self.assertEquals(end_colour['red'], finished['red'])
+		self.assertEquals(end_colour['green'], finished['green'])
+
+		from_time = datetime.datetime.now()
+		duration = datetime.timedelta(seconds=5)
+		end_colour = {'red': 0, 'green' : 0, 'blue': 4095}
+		self.lights.fade(from_time, duration, end_colour)
+		finished = self.lights.get_lights()
+		self.assertEquals(end_colour['red'], finished['red'])
+		self.assertEquals(end_colour['green'], finished['green'])
+		self.assertEquals(end_colour['blue'], finished['blue'])
+
+		from_time = datetime.datetime.now()
+		duration = datetime.timedelta(seconds=5)
+		end_colour = {'red': 0, 'green' : 0, 'blue': 0}
+		self.lights.fade(from_time, duration, end_colour)
+		finished = self.lights.get_lights()
+		self.assertEquals(end_colour['red'], finished['red'])
+		self.assertEquals(end_colour['green'], finished['green'])
+		self.assertEquals(end_colour['blue'], finished['blue'])
 
 
  		

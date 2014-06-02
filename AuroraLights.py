@@ -164,6 +164,12 @@ class Lights(object):
 	def get_lights(self):
 		return self.colour
 	
+	def fade_diff(self, start_colour, end_color):
+		diff = (end_color - start_colour) / 100.00	
+		diff_absolute = math.fabs(diff)
+		
+		return { 'diff' : diff, 'absolute' : diff_absolute }
+	
 	def fade(self, from_time, duration, end_colour):
 # 		Get current light colour
 # 
@@ -180,9 +186,9 @@ class Lights(object):
 
 		current_colour = self.get_lights()
 
-		diff_red = (end_colour['red'] - current_colour['red']) / 100.00
-		print str(end_colour['red']) + ' - ' + str(current_colour['red']) + ' / 100 = ' + str(diff_red)
-		diff_red_absolute = math.fabs(diff_red)
+		diff_red = self.fade_diff(end_colour['red'], current_colour['red'])
+		diff_green = self.fade_diff(end_colour['green'], current_colour['green'])
+		diff_blue = self.fade_diff(end_colour['blue'], current_colour['blue'])
 		
 		total_duration = duration.seconds * 1000000
 		total_duration = float(total_duration)
@@ -196,17 +202,24 @@ class Lights(object):
 # 			print remaining
 			percent_remaining = round((remaining/total_duration) * 100,2)
 			
-			if(diff_red < 0) :
-				red = percent_remaining * diff_red_absolute				
-# 				print 'diff_red < 0: red: ' + str(red)
+			if(diff_red['diff'] < 0) :
+				red = (100 - percent_remaining) * diff_red['absolute']
+			else:				
+				red = percent_remaining * diff_red['absolute']
+
+			if(diff_green['diff'] < 0) :
+				green = (100 - percent_remaining) * diff_green['absolute']
 			else:
-				red = (100 - percent_remaining) * diff_red_absolute
+				green = percent_remaining * diff_green['absolute']				
+
+			if(diff_blue['diff'] < 0) :
+				blue = (100 - percent_remaining) * diff_blue['absolute']
+			else:				
+				blue = percent_remaining * diff_blue['absolute']
 			
-# 			red_diff = ((end_colour['red'] - current_colour['red']) /100 * remaining)
-# 			print red_diff
-			colour = { 'red' : red, 'green' : 0, 'blue': 0}			
+			colour = { 'red' : red, 'green' : green, 'blue': blue}			
 			self.set_lights(colour)
-			time.sleep(0.1)
+# 			time.sleep(0.025)
 		end_time = time.time()
 		print '=' * 10 + ' Elapsed ' + '=' * 10
 		print end_time - start_time
