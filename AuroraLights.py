@@ -12,13 +12,13 @@ class Lights(object):
 		self.blue_pin = 3
 
 		self.light_state = False
-		self.reading_light = {'red' : 255, 'green' : 255, 'blue' : 255}
+		self.reading_light = {'red': 255, 'green': 255, 'blue': 255}
 		self.reading_light['red'] = self.reading_light['red'] * 16
 		self.reading_light['green'] = self.reading_light['green'] * 16
 		self.reading_light['blue'] = self.reading_light['blue'] * 16
 		print 'red: ' + str(self.reading_light['red'])
 		
-		self.colour = {'red' : 0, 'green': 0, 'blue': 0}
+		self.colour = {'red': 0, 'green': 0, 'blue': 0}
 		
 		self.pwm.setPWM(self.red_pin, 0 , 0)
 		self.pwm.setPWM(self.green_pin, 0, 0)
@@ -40,7 +40,7 @@ class Lights(object):
  			self.toggle_light_off()
 			print "turning off"
 # 			self.light_state = False
-		else :
+		else:
 			self.toggle_light_on()
 			print "turning on"
 # 			self.light_state = True
@@ -59,7 +59,7 @@ class Lights(object):
 			green = float(self.reading_light['green']) / 4096.00 * x
 			blue = float(self.reading_light['blue']) / 4096.00 * x
 
-			colour = {'red' : red, 'green' : green, 'blue' : blue}
+			colour = {'red': red, 'green': green, 'blue': blue}
 			self.set_lights(colour)
 
 # 		print x
@@ -79,7 +79,7 @@ class Lights(object):
 			red = float(self.reading_light['red']) / 4096.00 * x
 			green = float(self.reading_light['green']) / 4096.00 * x
 			blue = float(self.reading_light['blue']) / 4096.00 * x
-			colour = {'red' : red, 'green' : green, 'blue' : blue}
+			colour = {'red': red, 'green': green, 'blue': blue}
 			self.set_lights(colour)
 
 		self.light_state = False
@@ -135,19 +135,19 @@ class Lights(object):
 		blue = int(colour['blue'])
 
 		# Prevent out of range
-		if(red > 4095) :
+		if(red > 4095):
 			red = 4095
-		if(green > 4095) :
+		if(green > 4095):
 			green = 4095
-		if(blue > 4095) :
+		if(blue > 4095):
 			blue = 4095
 
 		# Prevent out of range
-		if(red < 0) :
+		if(red < 0):
 			red = 0
-		if(green < 0) :
+		if(green < 0):
 			green = 0
-		if(blue < 0) :
+		if(blue < 0):
 			blue = 0
 
 # 		print 'R:' + str(red) + ', G:' + str(green) + ', B:' + str(blue)
@@ -155,7 +155,7 @@ class Lights(object):
 		self.pwm.setPWM(self.green_pin, 0, green)
 		self.pwm.setPWM(self.blue_pin, 0, blue)
 		
-		self.colour = {'red': red, 'green': green, 'blue' : blue}
+		self.colour = {'red': red, 'green': green, 'blue': blue}
 	
 	def turn_off(self):
 		colour = {'red': 0, 'green': 0, 'blue': 0}
@@ -168,28 +168,57 @@ class Lights(object):
 		diff = (end_color - start_colour) / 100.00	
 		diff_absolute = math.fabs(diff)
 		
-		return { 'diff' : diff, 'absolute' : diff_absolute }
+		return { 'diff': diff, 'absolute': diff_absolute }
+	
+	def fade_colour(self, colour, percent_remaining):
+		if(colour['diff'] < 0):
+			colour_to_set = (100 - percent_remaining) * colour['absolute']
+		else:				
+			colour_to_set = percent_remaining * colour['absolute']
+			
+		return colour_to_set
+	
+	def fade_colours(self, diffs, percent_remaining):
+		# Calculate values
+		red = self.fade_colour(diffs['red'], percent_remaining)
+		green = self.fade_colour(diffs['green'], percent_remaining)
+		blue = self.fade_colour(diffs['blue'], percent_remaining)
+		
+		return {'red': red, 'green': green, 'blue': blue}
+	
+
+	def fade_diffs(self, start_colour, end_colour):
+		diff_red = self.fade_diff(end_colour['red'], start_colour['red'])
+		diff_green = self.fade_diff(end_colour['green'], start_colour['green'])
+		diff_blue = self.fade_diff(end_colour['blue'], start_colour['blue'])
+		
+		return {'red': diff_red, 'green': diff_green, 'blue': diff_blue}
+		
 	
 	def fade(self, from_time, duration, end_colour):
-# 		Get current light colour
+
 # 
 # 		Calculate time till end
 # 			Now + duration = end_time
 # 			time till end = end_time - now
 # 		calculate colour
-		# Get current light colour
 # 		current_colour = self.get_lights()
 		
 		# Calculate time till end
 		# Now + duration = end_time
 		end_time = from_time + duration
 
+		# Get current light colour
 		current_colour = self.get_lights()
-
-		diff_red = self.fade_diff(end_colour['red'], current_colour['red'])
-		diff_green = self.fade_diff(end_colour['green'], current_colour['green'])
-		diff_blue = self.fade_diff(end_colour['blue'], current_colour['blue'])
 		
+		
+		# Get colours differences
+		diffs = self.fade_diffs(current_colour, end_colour)
+# 		diff_red = self.fade_diff(end_colour['red'], current_colour['red'])
+# 		diff_green = self.fade_diff(end_colour['green'], current_colour['green'])
+# 		diff_blue = self.fade_diff(end_colour['blue'], current_colour['blue'])
+		
+		# Convert seconds into microsecnds
 		total_duration = duration.seconds * 1000000
 		total_duration = float(total_duration)
 		
@@ -199,37 +228,15 @@ class Lights(object):
 			# time till end = end_time - now
 			diff = end_time - datetime.datetime.now()
 			remaining = (diff.seconds * 1000000) + diff.microseconds
-# 			print remaining
 			percent_remaining = round((remaining/total_duration) * 100,2)
 			
-			if(diff_red['diff'] < 0) :
-				red = (100 - percent_remaining) * diff_red['absolute']
-			else:				
-				red = percent_remaining * diff_red['absolute']
-
-			if(diff_green['diff'] < 0) :
-				green = (100 - percent_remaining) * diff_green['absolute']
-			else:
-				green = percent_remaining * diff_green['absolute']				
-
-			if(diff_blue['diff'] < 0) :
-				blue = (100 - percent_remaining) * diff_blue['absolute']
-			else:				
-				blue = percent_remaining * diff_blue['absolute']
-			
-			colour = { 'red' : red, 'green' : green, 'blue': blue}			
+			colour = self.fade_colours(diffs, percent_remaining)
 			self.set_lights(colour)
-# 			time.sleep(0.025)
+			if(duration.seconds > 10):
+				time.sleep(0.5)
+
 		end_time = time.time()
 		print '=' * 10 + ' Elapsed ' + '=' * 10
 		print end_time - start_time
-		print '=' * 10 + ' end fade loop ' + '=' * 10
+
 		self.set_lights(end_colour)
-	
-		print from_time
-		
-		print duration.seconds
-		print duration.microseconds
-		
-		end_time = from_time + duration
-		print end_time
