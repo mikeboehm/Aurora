@@ -35,32 +35,24 @@ class Lights(object):
 	def toggle_light(self, channel):
 		print 'toggle_light'
 		start_time = time.time()
+		duration = datetime.timedelta(seconds=1)
 # 		print self.light_state
 		if self.light_state:
- 			self.toggle_light_off()
+ 			self.toggle_light_off(duration)
 			print "turning off"
-# 			self.light_state = False
 		else:
-			self.toggle_light_on()
+			self.toggle_light_on(duration)
 			print "turning on"
-# 			self.light_state = True
-
 		elapsed_time = time.time() - start_time
 		print elapsed_time
 
 
 	# Turns reading light on
-	def toggle_light_on(self):
+	def toggle_light_on(self, duration):
 		print 'toggle_light_on'
 		print self.reading_light['red']
-		
-		for x in range(0,4096, 16):
-			red = float(self.reading_light['red']) / 4096.00 * x
-			green = float(self.reading_light['green']) / 4096.00 * x
-			blue = float(self.reading_light['blue']) / 4096.00 * x
-
-			colour = {'red': red, 'green': green, 'blue': blue}
-			self.set_lights(colour)
+		now = datetime.datetime.now()
+		self.fade(now, duration, self.reading_light)
 
 # 		print x
 # 		print 'red: ' + str(red)
@@ -68,19 +60,12 @@ class Lights(object):
 # 		time.sleep(1)
 
 	# Turns reading light off
-	def toggle_light_off(self):
+	def toggle_light_off(self, duration):
 		print 'toggle_light_off'
-		print self.reading_light['red']
-		print '#' * 20
-		
-		initial_colour = self.colour
-
-		for x in range (4096 ,-1, -16):
-			red = float(self.reading_light['red']) / 4096.00 * x
-			green = float(self.reading_light['green']) / 4096.00 * x
-			blue = float(self.reading_light['blue']) / 4096.00 * x
-			colour = {'red': red, 'green': green, 'blue': blue}
-			self.set_lights(colour)
+		print duration
+		from_time = datetime.datetime.now()
+		end_colour = {'red': 0, 'green': 0, 'blue': 0}
+		self.fade(from_time, duration, end_colour)
 
 		self.light_state = False
 
