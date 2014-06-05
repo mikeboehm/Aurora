@@ -180,15 +180,7 @@ class Lights(object):
 		return {'red': diff_red, 'green': diff_green, 'blue': diff_blue}
 		
 	
-	def fade(self, from_time, duration, end_colour):
-
-# 
-# 		Calculate time till end
-# 			Now + duration = end_time
-# 			time till end = end_time - now
-# 		calculate colour
-# 		current_colour = self.get_lights()
-		
+	def fade(self, from_time, duration, end_colour):		
 		# Calculate time till end
 		# Now + duration = end_time
 		end_time = from_time + duration
@@ -199,9 +191,6 @@ class Lights(object):
 		
 		# Get colours differences
 		diffs = self.fade_diffs(current_colour, end_colour)
-# 		diff_red = self.fade_diff(end_colour['red'], current_colour['red'])
-# 		diff_green = self.fade_diff(end_colour['green'], current_colour['green'])
-# 		diff_blue = self.fade_diff(end_colour['blue'], current_colour['blue'])
 		
 		# Convert seconds into microsecnds
 		total_duration = duration.seconds * 1000000
