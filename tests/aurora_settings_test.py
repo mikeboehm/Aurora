@@ -1,7 +1,8 @@
 #!/usr/bin/python
+import unittest, os, sys
+sys.path.append(os.path.abspath('..'))
 
 import AuroraSettings
-import unittest
 import datetime
 import random
 

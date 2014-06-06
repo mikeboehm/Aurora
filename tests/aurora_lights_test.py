@@ -1,10 +1,10 @@
 #!/usr/bin/python
+import unittest, os, sys
+sys.path.append(os.path.abspath('..'))
 
 import AuroraLights
-import unittest
 import datetime
 import time
-import os
 import random
 
 os.system('clear')
