@@ -2,6 +2,8 @@ from Adafruit_PWM_Servo_Driver import PWM
 import time
 import datetime
 import math
+from threading import Thread
+
 class Lights(object):
 	def __init__(self):
 		self.pwm = PWM(0x40, debug=True)
@@ -23,6 +25,21 @@ class Lights(object):
 		self.pwm.setPWM(self.red_pin, 0 , 0)
 		self.pwm.setPWM(self.green_pin, 0, 0)
 		self.pwm.setPWM(self.blue_pin, 0, 0)
+		
+		self.fade_loop_stop = False
+		end_time = datetime.datetime.now()
+		self.fade_end_time = end_time
+		black = {'red': 0, 'green': 0, 'blue': 0}
+		self.fade_diffs_dict = self.fade_diffs(black, black)
+		self.fade_total_duration = datetime.timedelta(seconds=0)
+		
+		self.fade_loop = Thread(target=self.fade2)
+		self.fade_loop.start()
+		print '{' * 20 
+		print self.fade_loop.is_alive()
+		print '}' * 20 
+
+		
 
 	def toggle_light_callback(self, channel):
 		print 'toggle_light_callback'
@@ -214,3 +231,91 @@ class Lights(object):
 		print end_time - start_time
 
 		self.set_lights(end_colour)
+	
+	# Set threaded fade
+	def set_fade(self, duration, end_colour):
+		print '/' * 20 
+		print self.fade_loop.is_alive()
+		print '\\' * 20 
+
+# 		if self.fade_loop.is_alive() == False:
+# 			self.fade_loop.start()
+		
+		self.fade_loop_stop = False
+		now = datetime.datetime.now()
+		self.fade_end_time = now + duration
+		
+		# Get current light colour
+		current_colour = self.get_lights()
+	
+		# Get colours differences
+		self.fade_diffs_dict = self.fade_diffs(current_colour, end_colour)
+		
+		# Convert seconds into microsecnds
+		total_duration = duration.seconds * 1000000
+		self.fade_total_duration = float(total_duration)		
+		
+		print '[' * 20 + ' ' + str(self.fade_loop.is_alive()) + ' ' + ']' * 20 
+# 		if self.fade_loop.is_alive() == False:
+# 			self.fade_loop.start()
+			
+		print '/' * 20 
+		print self.fade_loop.is_alive()
+		print '\\' * 20 
+		
+	
+	# Set fade
+	# Calc diffs
+	# Calc duration
+		
+	# Fade loop
+	# Is now < end_time?
+	#	Is now different to end_colour?
+	#		Do what needs to be done
+
+	def kill_fade(self):
+		self.fade_loop_stop = True
+	
+
+	def fade2(self):		
+		# Calculate time till end
+		# Now + duration = end_time
+# 		now = datetime.datetime.now()
+# 		end_time = self.fade['end_time']
+# 		
+# 
+# 		# Get current light colour
+# 		current_colour = self.get_lights()
+# 	
+# 		# Get colours differences
+# 		diffs = self.fade_diffs(current_colour, end_colour)
+# 	
+# 		# Convert seconds into microsecnds
+# 		total_duration = duration.seconds * 1000000
+# 		total_duration = float(total_duration)
+# 		
+		print '=' * 10 + ' Start fade loop thread ' + '=' * 10
+# 		start_time = time.time()
+		
+ 		launch_time = datetime.datetime.now()
+ 		terminate = launch_time + datetime.timedelta(seconds=60)
+		
+		while datetime.datetime.now() < terminate:
+			if self.fade_loop_stop:
+					print 'exiting'
+					return 'exiting'
+
+			if datetime.datetime.now() <= self.fade_end_time:							
+				# time till end = end_time - now
+				diff = self.fade_end_time - datetime.datetime.now()
+				remaining = (diff.seconds * 1000000) + diff.microseconds
+				percent_remaining = round((remaining/self.fade_total_duration) * 100,2)
+				
+				colour = self.fade_colours(self.fade_diffs_dict, percent_remaining)
+				self.set_lights(colour)
+
+# 			if(duration.seconds > 10):
+			time.sleep(0.01)
+		
+		print 'exiting while'
+# 		self.set_lights(end_colour)
