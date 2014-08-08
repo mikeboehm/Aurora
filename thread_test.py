@@ -11,7 +11,11 @@ from threading import Thread
 t = Thread(target=countdown, args=(10,))
 t.start()
 i = 0
-while i < 100:
+while i < 120:
 	print i
 	i += 1
+	if t.is_alive():
+	    print('Still running')
+	else:
+	    print('Completed')
 	time.sleep(0.1)
