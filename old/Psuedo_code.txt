@@ -1,0 +1,12 @@
+/*
+
+Set lights
+	Get current time
+	Get today's date
+	Get alarm time
+	
+	if current_time <= dawn_time {
+	}
+	
+	
+*/
