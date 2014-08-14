@@ -241,9 +241,8 @@ class Lights(object):
 
 	# Set threaded fade
 	def set_fade(self, duration, end_colour):
-		print '/' * 20
-		print self.fade_loop.is_alive()
-		print '\\' * 20
+		print '#' * 10, '  set_fade()  ', '#' * 10
+		print 'fade_loop.is_alive: ', self.fade_loop.is_alive()
 
 # 		if self.fade_loop.is_alive() == False:
 # 			self.fade_loop.start()
@@ -262,13 +261,12 @@ class Lights(object):
 		total_duration = duration.seconds * 1000000
 		self.fade_total_duration = float(total_duration)
 
-		print '[' * 20 + ' ' + str(self.fade_loop.is_alive()) + ' ' + ']' * 20
+		print '[' * 10 + ' ' + str(self.fade_loop.is_alive()) + ' ' + ']' * 10
 # 		if self.fade_loop.is_alive() == False:
 # 			self.fade_loop.start()
 
-		print '/' * 20
-		print self.fade_loop.is_alive()
-		print '\\' * 20
+		print '@' * 20
+		print 'fade_loop.is_alive: ', self.fade_loop.is_alive()
 
 
 	# Set fade
@@ -283,7 +281,8 @@ class Lights(object):
 	def kill_fade(self):
 		self.fade_loop_stop = True
 
-
+	
+	# Fade loop
 	def fade2(self):
 		# Calculate time till end
 		# Now + duration = end_time
@@ -305,24 +304,33 @@ class Lights(object):
 # 		start_time = time.time()
 
  		launch_time = datetime.datetime.now()
- 		terminate = launch_time + datetime.timedelta(seconds=60)
-
-		while datetime.datetime.now() < terminate:
-			if self.fade_loop_stop:
+ 		terminate = launch_time + datetime.timedelta(seconds=30)
+ 		
+ 		print 'Terminate: ', terminate
+ 		
+		# Loop until timeout
+		
+		try:		
+			while datetime.datetime.now() < terminate:			
+				if self.fade_loop_stop == True:
 					print 'exiting'
-					return 'exiting'
-
-			if datetime.datetime.now() <= self.fade_end_time:
-				# time till end = end_time - now
-				diff = self.fade_end_time - datetime.datetime.now()
-				remaining = (diff.seconds * 1000000) + diff.microseconds
-				percent_remaining = round((remaining/self.fade_total_duration) * 100,2)
-
-				colour = self.fade_colours(self.fade_diffs_dict, percent_remaining)
-				self.set_lights(colour)
-
-# 			if(duration.seconds > 10):
-			time.sleep(0.01)
+					return
+	
+				if datetime.datetime.now() <= self.fade_end_time:
+					# time till end = end_time - now
+					diff = self.fade_end_time - datetime.datetime.now()
+					remaining = (diff.seconds * 1000000) + diff.microseconds
+					percent_remaining = round((remaining/self.fade_total_duration) * 100,2)
+	
+					colour = self.fade_colours(self.fade_diffs_dict, percent_remaining)
+					self.set_lights(colour)
+				
+				
+				
+	# 			if(duration.seconds > 10):
+				time.sleep(0.01)
+		except KeyboardInterrupt:
+			self.fade_loop.exit()	
 
 		print 'exiting while'
 # 		self.set_lights(end_colour)
