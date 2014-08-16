@@ -19,72 +19,70 @@ class Aurora(object):
 		# Update settings
 # 		self.settings = self.get_settings()
 
-		self.threads = {}
-
 		# Get next alarm
-		self.next_alarm = self.next_alarm()
+		next_alarm = self.next_alarm()
+		print next_alarm
 		# Set alarm thread(s)
-		self.alarm = self.set_alarm(self.next_alarm)
-		print self.next_alarm
-		# Set button toggle callback ?
+		self.set_alarm(next_alarm)
+		# @todo Set button toggle callback
 	
 	# Returns settings from config
 	def get_settings(self):
 		# Set next update thread
 		pass
+
+	# Creates a Timer thread for the next alarm	
+	def set_alarm(self, next_alarm):
+		seconds_to_alarm = self.seconds_till_alarm(next_alarm['dawn']['end_time'])
+
+		dawn = threading.Timer(seconds_to_alarm, self.trigger_dawn)
+		dawn.start()
+# 		self.threads['dawn'] = dawn
 	
 	# Setup dawn tranistion
 	# Create a thread for sunrise
 	def trigger_dawn(self):
 		print 'trigger_dawn'
-		# Setup sunrise
-# 		sunrise = threading.Timer(2.0, self.trigger_sunrise)
-# 		sunrise.start()
-# 		self.threads['sunrise'] = sunrise
-		
 		# Fade
-		self.lights.fade()
+		end_colour = {'red': 4095, 'green': 0, 'blue': 0}
+		duration = datetime.timedelta(seconds = 10)
+# 		end_time = datetime.datetime.now() + duration
+		fade = {'end_colour': end_colour, 'duration': duration}
+		self.lights.set_fade(fade)
+		
+		#self.next_alarm['dawn']
 
-	# Setup sunrise tranistion
-	# Create a thread for day
-	def trigger_sunrise(self):
-		print 'trigger_sunrise'
-		# Setup auto-shutoff
-		shutoff = threading.Timer(2.0, self.trigger_autoshutoff)
-		shutoff.start()
-		self.threads['day'] = shutoff
+# 	# Setup sunrise tranistion
+# 	# Create a thread for day
+# 	def trigger_sunrise(self):
+# 		print 'trigger_sunrise'
+# 		# Setup auto-shutoff
+# 		shutoff = threading.Timer(2.0, self.trigger_autoshutoff)
+# 		shutoff.start()
+# 		self.threads['day'] = shutoff
 
-	# Execute day routine (shut lights off)
-	def trigger_autoshutoff(self):
-		print 'turning lights off'
+# 	# Execute day routine (shut lights off)
+# 	def trigger_autoshutoff(self):
+# 		print 'turning lights off'
 	
-	# Creates a Timer thread for the next alarm	
-	def set_alarm(self, next_alarm):
-		countdown_to_alarm = next_alarm['dawn']['end_time'] - datetime.datetime.now()
-		seconds_to_alarm = countdown_to_alarm.total_seconds()
-
-		dawn = threading.Timer(seconds_to_alarm, self.trigger_dawn)
-		dawn.start()
-		self.threads['dawn'] = dawn
+	# Returns the number of seconds until an event
+	def seconds_till_alarm(self, end_time, start_time = datetime.datetime.now()):
+ 		countdown_to_alarm = end_time - start_time
+		return countdown_to_alarm.total_seconds()
+	
 
 	# Gets next alarm (typically tomorrow's)
 	def next_alarm(self):
 		# @todo Implement this properly
-		dawn_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
-		sunrise_time = dawn_time + datetime.timedelta(seconds=10)
-		day_time = sunrise_time + datetime.timedelta(seconds=10)
-		
+		dawn_time = datetime.datetime.now() + datetime.timedelta(seconds=10)		
 		duration = datetime.timedelta(seconds=10)
-		
-		dawn = {'end_time': dawn_time, 'duration': duration, 'end_colour': {'red': 255, 'green': 0, 'blue': 0}}
-		sunrise = {'end_time': sunrise_time, 'duration': duration, 'end_colour': {'red': 255, 'green': 255, 'blue': 255}}
-		day = {'end_time': day_time, 'duration': duration, 'end_colour': {'red': 255, 'green': 255, 'blue': 255}}
+		end_colour = {'red': 255, 'green': 0, 'blue': 0}
+
+		dawn = {'end_time': dawn_time, 'duration': duration, 'end_colour': end_colour}
 		
 		print dawn_time
-		print sunrise_time
-		print day_time
 		
-		return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
+		return {'dawn': dawn}
 
 	# Cleans up all running threads
 	def shutdown(self):
