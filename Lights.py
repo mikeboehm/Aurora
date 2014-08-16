@@ -1,12 +1,11 @@
 from Adafruit_PWM_Servo_Driver import PWM
-import time
-import datetime
-import math
+import time, datetime, math
 from threading import Thread
 
 class Lights(object):
 	def __init__(self):
-		self.pwm = PWM(0x40, debug=True)
+# 		self.pwm = PWM(0x40, debug=True)
+		self.pwm = PWM(0x40, debug=False)
 		self.freq = 10
 		self.pwm.setPWMFreq(self.freq)
 		self.red_pin = 1
@@ -19,7 +18,7 @@ class Lights(object):
 		self.reading_light['green'] = self.reading_light['green'] * 16
 		self.reading_light['blue'] = self.reading_light['blue'] * 16
 
-		self.colour = {'red': 0, 'green': 0, 'blue': 0}
+		self.current_colour = {'red': 0, 'green': 0, 'blue': 0}
 
 		self.pwm.setPWM(self.red_pin, 0 , 0)
 		self.pwm.setPWM(self.green_pin, 0, 0)
@@ -40,7 +39,9 @@ class Lights(object):
 		self.fade_end_colour = end_colour
 		# Get current light colour
 		current_colour = self.get_lights()
-
+		
+		print current_colour
+		
 		# Get colours differences
 		self.fade_diffs_dict = self.fade_diffs(current_colour, end_colour)
 
@@ -55,6 +56,10 @@ class Lights(object):
 		
 	def fade_loop(self):
 		print 'Fade loop'
+		start_time = time.time()
+		
+		print 'fade_dict:', self.fade_diffs_dict
+		
 		# While now is <= fade end
 			# Fade
 		while datetime.datetime.now() <= self.fade_end_time:
@@ -66,22 +71,21 @@ class Lights(object):
 			colour = self.fade_colours(self.fade_diffs_dict, percent_remaining)
 			self.set_lights(colour)
 		
-			time.sleep(0.1)
+			time.sleep(0.05)
 
 		self.set_lights(self.fade_end_colour)
+		print 'Fade took: ', time.time() - start_time, ' seconds'
 
 	def set_lights(self, colour):
 		red = int(colour['red'])
 		green = int(colour['green'])
 		blue = int(colour['blue'])
-		
-		print 'red: ', red, 'green: ', green, 'blue: ', blue
-		
+				
 		self.pwm.setPWM(self.red_pin, 0 , red)
 		self.pwm.setPWM(self.green_pin, 0, green)
 		self.pwm.setPWM(self.blue_pin, 0, blue)
 		
-		self.colour = {'red': red, 'green': green, 'blue': blue}
+		self.current_colour = {'red': red, 'green': green, 'blue': blue}
 		
 	def get_lights(self):
 		return self.current_colour		
@@ -119,3 +123,10 @@ class Lights(object):
 			colour_to_set = percent_remaining * colour['absolute']
 
 		return colour_to_set
+		
+	def lights_off(self):
+		duration = datetime.timedelta(seconds=1)
+		end_colour = {'red': 0, 'green': 0, 'blue': 0}
+		fade = {'duration': duration, 'end_colour': end_colour}
+		self.set_fade(fade)
+
