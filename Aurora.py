@@ -16,14 +16,14 @@ os.system('clear')
 class Aurora(object):
 	def __init__(self):
 		self.lights = Lights()
+		self.next_alarm = False
 		# Update settings
 # 		self.settings = self.get_settings()
 
-		# Get next alarm
-		next_alarm = self.next_alarm()
-		print next_alarm
+		
+		
 		# Set alarm thread(s)
-		self.set_alarm(next_alarm)
+		
 		# @todo Set button toggle callback
 	
 	# Returns settings from config
@@ -32,11 +32,16 @@ class Aurora(object):
 		pass
 
 	# Creates a Timer thread for the next alarm	
-	def set_alarm(self, next_alarm):
-		seconds_to_alarm = self.seconds_till_alarm(next_alarm['dawn']['end_time'])
-
-		dawn = threading.Timer(seconds_to_alarm, self.trigger_dawn)
-		dawn.start()
+	def set_alarm(self):
+		# Get next alarm
+		self.next_alarm = self.get_next_alarm()
+		
+		dawn = self.next_alarm['dawn']['end_time'] - self.next_alarm['dawn']['duration']
+		seconds_to_alarm = self.seconds_till_alarm(dawn)
+		print 'Seconds till dawn: ', seconds_to_alarm
+		
+		dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
+		dawn_timer.start()
 # 		self.threads['dawn'] = dawn
 	
 	# Setup dawn tranistion
@@ -45,25 +50,42 @@ class Aurora(object):
 		print 'trigger_dawn'
 		# Fade
 		end_colour = {'red': 4095, 'green': 0, 'blue': 0}
-		duration = datetime.timedelta(seconds = 10)
-# 		end_time = datetime.datetime.now() + duration
+		duration = datetime.timedelta(seconds = 5)
+
 		fade = {'end_colour': end_colour, 'duration': duration}
 		self.lights.set_fade(fade)
 		
-		#self.next_alarm['dawn']
+		sunrise = self.next_alarm['sunrise']['end_time'] - self.next_alarm['sunrise']['duration']
+		seconds_to_sunrise = self.seconds_till_alarm(sunrise)
+		print 'Seconds till sunrise: ', seconds_to_sunrise
+		sunrise_timer = threading.Timer(seconds_to_sunrise, self.trigger_sunrise)
+		sunrise_timer.start()
+# 		time.sleep(10)
+		
+	# Setup sunrise tranistion
+	# Create a thread for day
+	def trigger_sunrise(self):
+		print 'trigger_sunrise'
 
-# 	# Setup sunrise tranistion
-# 	# Create a thread for day
-# 	def trigger_sunrise(self):
-# 		print 'trigger_sunrise'
-# 		# Setup auto-shutoff
-# 		shutoff = threading.Timer(2.0, self.trigger_autoshutoff)
-# 		shutoff.start()
-# 		self.threads['day'] = shutoff
+		end_colour = {'red': 4095, 'green': 4095, 'blue': 4095}
+		duration = datetime.timedelta(seconds = 10)
+		fade = {'end_colour': end_colour, 'duration': duration}
+		self.lights.set_fade(fade)
 
-# 	# Execute day routine (shut lights off)
-# 	def trigger_autoshutoff(self):
-# 		print 'turning lights off'
+		# Setup auto-shutoff
+		shutoff_thread = threading.Timer(15, self.trigger_autoshutoff)
+		shutoff_thread.start()
+
+	# Execute day routine (shut lights off)
+	def trigger_autoshutoff(self):
+		print 'turning lights off'
+		end_colour = {'red': 0, 'green': 0, 'blue': 0}
+		duration = datetime.timedelta(seconds = 2)
+		fade = {'end_colour': end_colour, 'duration': duration}
+		self.lights.set_fade(fade)
+		
+		# Set tomorrow's alarm
+		# @todo implement
 	
 	# Returns the number of seconds until an event
 	def seconds_till_alarm(self, end_time, start_time = datetime.datetime.now()):
@@ -72,31 +94,44 @@ class Aurora(object):
 	
 
 	# Gets next alarm (typically tomorrow's)
-	def next_alarm(self):
+	def get_next_alarm(self):
 		# @todo Implement this properly
-		dawn_time = datetime.datetime.now() + datetime.timedelta(seconds=10)		
 		duration = datetime.timedelta(seconds=10)
-		end_colour = {'red': 255, 'green': 0, 'blue': 0}
+		sunrise_end = datetime.datetime.now() + datetime.timedelta(seconds=21)
+		dawn_end = sunrise_end - duration
+		day_ends = sunrise_end + duration
 
-		dawn = {'end_time': dawn_time, 'duration': duration, 'end_colour': end_colour}
+		print 'Sunrise end:', sunrise_end
+		print 'Dawn end:', dawn_end
 		
-		print dawn_time
+		dawn = {'end_time': dawn_end, 'duration': duration}
+		sunrise = {'end_time': sunrise_end, 'duration': duration}		
+		day = {'end_time': day_ends}
 		
-		return {'dawn': dawn}
+# 		print dawn
+# 		print sunrise
+# 		print day
+		
+		return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
 
 	# Cleans up all running threads
 	def shutdown(self):
-		pass
-	
-try:
-	aurora = Aurora()
-	# Main loop
-# 	while True:
-# 		print 'sleeping: ', datetime.datetime.now().time()
-# 		time.sleep(10) # Remember that the set_alarm() returns almost instantly, so the sleep should probably be
-# 		print 'set up:   ', datetime.datetime.now().time()
-# 		aurora.set_alarm(aurora.next_alarm)
+		self.lights.lights_off()
 
-except KeyboardInterrupt:
-	aurora.shutdown()
-	print '#' * 10 + ' Exiting ' + '#' * 10
+if __name__ == '__main__':
+	try:
+		aurora = Aurora()
+		aurora.set_alarm()
+		print 'already exited'
+		time.sleep(10)
+	# 	aurora.shutdown()
+		# Main loop
+	# 	while True:
+	# 		print 'sleeping: ', datetime.datetime.now().time()
+	# 		time.sleep(10) # Remember that the set_alarm() returns almost instantly, so the sleep should probably be
+	# 		print 'set up:   ', datetime.datetime.now().time()
+	# 		aurora.set_alarm(aurora.next_alarm)
+	
+	except KeyboardInterrupt:
+		aurora.shutdown()
+		print '#' * 10 + ' Exiting ' + '#' * 10
