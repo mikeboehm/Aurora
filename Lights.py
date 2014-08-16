@@ -1,3 +1,4 @@
+from Adafruit_PWM_Servo_Driver import PWM
 import time
 import datetime
 import math
@@ -5,13 +6,30 @@ from threading import Thread
 
 class Lights(object):
 	def __init__(self):
-		self.current_colour = {'red': 0, 'green': 0, 'blue': 0}
-		
-	def set_fade(self, fade):
-		# Do fade calcs
-		# Set fade calcs
-		# Start fade_loop
-		pass
+		self.pwm = PWM(0x40, debug=True)
+		self.freq = 10
+		self.pwm.setPWMFreq(self.freq)
+		self.red_pin = 1
+		self.green_pin = 2
+		self.blue_pin = 3
+
+		self.light_state = False
+		self.reading_light = {'red': 255, 'green': 255, 'blue': 255}
+		self.reading_light['red'] = self.reading_light['red'] * 16
+		self.reading_light['green'] = self.reading_light['green'] * 16
+		self.reading_light['blue'] = self.reading_light['blue'] * 16
+
+		self.colour = {'red': 0, 'green': 0, 'blue': 0}
+
+		self.pwm.setPWM(self.red_pin, 0 , 0)
+		self.pwm.setPWM(self.green_pin, 0, 0)
+		self.pwm.setPWM(self.blue_pin, 0, 0)
+
+		end_time = datetime.datetime.now()
+		self.fade_end_time = end_time
+		black = {'red': 0, 'green': 0, 'blue': 0}
+		self.fade_diffs_dict = self.fade_diffs(black, black)
+		self.fade_total_duration = datetime.timedelta(seconds=0)
 		
 	# Set threaded fade
 	def set_fade(self, fade):
@@ -58,6 +76,10 @@ class Lights(object):
 		blue = int(colour['blue'])
 		
 		print 'red: ', red, 'green: ', green, 'blue: ', blue
+		
+		self.pwm.setPWM(self.red_pin, 0 , red)
+		self.pwm.setPWM(self.green_pin, 0, green)
+		self.pwm.setPWM(self.blue_pin, 0, blue)
 		
 		self.colour = {'red': red, 'green': green, 'blue': blue}
 		
