@@ -91,12 +91,13 @@ class Lights(object):
 		# While now is <= fade end
 			# Fade
 		while datetime.datetime.now() <= self.fade_end_time:
+			current_lights = self.get_lights()
 			# time till end = end_time - now
 			diff = self.fade_end_time - datetime.datetime.now()
 			remaining = (diff.seconds * 1000000) + diff.microseconds
 			percent_remaining = round((remaining/self.fade_total_duration) * 100,2)
 
-			colour = self.fade_colours(self.fade_diffs_dict, percent_remaining)
+			colour = self.fade_colours(self.fade_diffs_dict, percent_remaining, current_lights)
 			self.set_lights(colour)
 		
 			time.sleep(0.05)
@@ -131,22 +132,23 @@ class Lights(object):
 		diff = (end_colour - start_colour) / 100.00
 		diff_absolute = math.fabs(diff)
 
-		return { 'diff': diff, 'absolute': diff_absolute }
-		
+		return { 'diff': diff, 'absolute': diff_absolute }		
 
 	# Returns colour to be set, based on the colour diffs
-	def fade_colours(self, diffs, percent_remaining):
+	def fade_colours(self, diffs, percent_remaining, current_lights):
 		# Calculate values
-		red = self.fade_colour(diffs['red'], percent_remaining)
-		green = self.fade_colour(diffs['green'], percent_remaining)
-		blue = self.fade_colour(diffs['blue'], percent_remaining)
+		red = self.fade_colour(diffs['red'], percent_remaining, current_lights['red'])
+		green = self.fade_colour(diffs['green'], percent_remaining, current_lights['green'])
+		blue = self.fade_colour(diffs['blue'], percent_remaining, current_lights['blue'])
 
 		return {'red': red, 'green': green, 'blue': blue}
 
 	# Child method of fade_colours()
-	def fade_colour(self, colour, percent_remaining):
-		if(colour['diff'] < 0):
+	def fade_colour(self, colour, percent_remaining, current_colour):
+		if colour['diff'] < 0:
 			colour_to_set = (100 - percent_remaining) * colour['absolute']
+		elif colour['diff'] == 0:
+			colour_to_set = current_colour
 		else:
 			colour_to_set = percent_remaining * colour['absolute']
 
