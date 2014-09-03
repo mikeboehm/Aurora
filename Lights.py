@@ -1,9 +1,35 @@
+### GPIO Hardware Pins ###
+#	1	3.3v
+#	3	SDA0		I2C	Data pin (SDA)
+#	5	SCL0		I2C Clock	(SCL)
+####	11	GPIO 0		Button/Switch (This is not the case. 
+#	14	GND
+#	17	# 17		Button/Switch
+
+###	PMW channels ###
+# 	4		Red Pin
+# 	5		Green Pin
+# 	6		Blue Pin
+
 from Adafruit_PWM_Servo_Driver import PWM
 import time, datetime, math
 from threading import Thread
+import RPi.GPIO as GPIO
+
 
 class Lights(object):
 	def __init__(self):
+		
+		# Setup GPIO for reading light button
+		GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
+		BUTTON_1 = 17           # Sets our input pins
+		GPIO.setup(BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set our input pin to be an input, with internal pullup resistor on
+
+		# Set bounce time to be higher than the time it takes for the callback to return
+		# http://www.raspberrypi.org/phpBB3/viewtopic.php?f=32&t=40891
+		GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=self.toggle_light_callback, bouncetime=300)
+
+	
 # 		self.pwm = PWM(0x40, debug=True)
 		self.pwm = PWM(0x40, debug=False)
 		self.freq = 10
@@ -12,11 +38,13 @@ class Lights(object):
 		self.green_pin = 2
 		self.blue_pin = 3
 
+		# Reading lights
 		self.light_state = False
-		self.reading_light = {'red': 255, 'green': 255, 'blue': 255}
+		self.reading_light = {'red': 255, 'green': 25, 'blue': 0}
 		self.reading_light['red'] = self.reading_light['red'] * 16
 		self.reading_light['green'] = self.reading_light['green'] * 16
 		self.reading_light['blue'] = self.reading_light['blue'] * 16
+		self.reading_light_duration = datetime.timedelta(seconds=1)
 
 		self.current_colour = {'red': 0, 'green': 0, 'blue': 0}
 
@@ -123,10 +151,24 @@ class Lights(object):
 			colour_to_set = percent_remaining * colour['absolute']
 
 		return colour_to_set
-		
+	
+	# Turns reading lights off	
 	def lights_off(self):
-		duration = datetime.timedelta(seconds=1)
 		end_colour = {'red': 0, 'green': 0, 'blue': 0}
-		fade = {'duration': duration, 'end_colour': end_colour}
+		fade = {'duration': self.reading_light_duration, 'end_colour': end_colour}
+		self.set_fade(fade)
+		
+	# Turns reading lights on
+	def lights_on(self):		
+		fade = {'duration': self.reading_light_duration, 'end_colour': self.reading_light}
 		self.set_fade(fade)
 
+	# Callback from push-button press to toggle reading lights
+	def toggle_light_callback(self, channel):
+		if self.light_state:
+			self.lights_off()
+			self.light_state = False
+		else:
+			self.lights_on()
+			self.light_state = True
+		print 'toggle_light_callback'
