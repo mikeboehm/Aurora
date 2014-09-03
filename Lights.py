@@ -21,14 +21,13 @@ class Lights(object):
 		
 		# Setup GPIO for reading light button
 		GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
-		BUTTON_1 = 17           # Sets our input pins
+		BUTTON_1 = 17           # Sets our input pin
 		GPIO.setup(BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set our input pin to be an input, with internal pullup resistor on
 
-		# Set bounce time to be higher than the time it takes for the callback to return
-		# http://www.raspberrypi.org/phpBB3/viewtopic.php?f=32&t=40891
+		# Setup push-button callback
 		GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=self.toggle_light_callback, bouncetime=300)
 
-	
+		# PWM config
 # 		self.pwm = PWM(0x40, debug=True)
 		self.pwm = PWM(0x40, debug=False)
 		self.freq = 10
@@ -37,23 +36,24 @@ class Lights(object):
 		self.green_pin = 2
 		self.blue_pin = 3
 
-		# Reading lights
+		# Reading light settings
 		self.light_state = False
-		self.reading_light = {'red': 255, 'green': 25, 'blue': 0}
-		self.reading_light['red'] = self.reading_light['red'] * 16
-		self.reading_light['green'] = self.reading_light['green'] * 16
-		self.reading_light['blue'] = self.reading_light['blue'] * 16
+		reading_light = {'red': 255, 'green': 25, 'blue': 0}
+		# Convert 8-bit colour to 12-bit (for PWM)
+		self.reading_light['red'] = reading_light['red'] * 16
+		self.reading_light['green'] = reading_light['green'] * 16
+		self.reading_light['blue'] = reading_light['blue'] * 16
 		self.reading_light_duration = datetime.timedelta(seconds=1)
+		
+		black = {'red': 0, 'green': 0, 'blue': 0}
+		
+		# Set "current_colour" and PWM to black/off
+		self.set_lights(self, black)		
 
-		self.current_colour = {'red': 0, 'green': 0, 'blue': 0}
-
-		self.pwm.setPWM(self.red_pin, 0 , 0)
-		self.pwm.setPWM(self.green_pin, 0, 0)
-		self.pwm.setPWM(self.blue_pin, 0, 0)
-
+		# Setup fade values
 		end_time = datetime.datetime.now()
 		self.fade_end_time = end_time
-		black = {'red': 0, 'green': 0, 'blue': 0}
+		
 		self.fade_diffs_dict = self.fade_diffs(black, black)
 		self.fade_total_duration = datetime.timedelta(seconds=0)
 		
