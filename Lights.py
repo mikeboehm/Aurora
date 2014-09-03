@@ -2,7 +2,6 @@
 #	1	3.3v
 #	3	SDA0		I2C	Data pin (SDA)
 #	5	SCL0		I2C Clock	(SCL)
-####	11	GPIO 0		Button/Switch (This is not the case. 
 #	14	GND
 #	17	# 17		Button/Switch
 
