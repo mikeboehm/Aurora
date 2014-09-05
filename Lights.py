@@ -40,15 +40,16 @@ class Lights(object):
 		self.light_state = False
 		reading_light = {'red': 255, 'green': 25, 'blue': 0}
 		# Convert 8-bit colour to 12-bit (for PWM)
-		self.reading_light['red'] = reading_light['red'] * 16
-		self.reading_light['green'] = reading_light['green'] * 16
-		self.reading_light['blue'] = reading_light['blue'] * 16
+		self.reading_light = {'red': reading_light['red'] * 16, 'green': reading_light['green'] * 16, 'blue': reading_light['blue'] * 16}
+# 		self.reading_light['red'] = self.reading_light['red'] * 16
+# 		self.reading_light['green'] = reading_light['green'] * 16
+# 		self.reading_light['blue'] = reading_light['blue'] * 16
 		self.reading_light_duration = datetime.timedelta(seconds=1)
 		
 		black = {'red': 0, 'green': 0, 'blue': 0}
 		
 		# Set "current_colour" and PWM to black/off
-		self.set_lights(self, black)		
+		self.set_lights(black)		
 
 		# Setup fade values
 		end_time = datetime.datetime.now()
@@ -56,6 +57,9 @@ class Lights(object):
 		
 		self.fade_diffs_dict = self.fade_diffs(black, black)
 		self.fade_total_duration = datetime.timedelta(seconds=0)
+		
+		# Create fade loops so we can test if they're running and also kill them
+		self.fade_loop = Thread(target=self.fader)
 		
 	# Set threaded fade
 	def set_fade(self, fade):
@@ -67,7 +71,7 @@ class Lights(object):
 		# Get current light colour
 		current_colour = self.get_lights()
 		
-		print current_colour
+# 		print current_colour
 		
 		# Get colours differences
 		self.fade_diffs_dict = self.fade_diffs(current_colour, end_colour)
@@ -77,16 +81,14 @@ class Lights(object):
 		self.fade_total_duration = float(total_duration)
 		
 		# Start fade loop
-		fade_loop = Thread(target=self.fade_loop)
-		fade_loop.start()
+		self.fade_loop = Thread(target=self.fader)
+		self.fade_loop.start()
 		
 		
-	def fade_loop(self):
-		print 'Fade loop'
-		start_time = time.time()
-		
-		print 'fade_dict:', self.fade_diffs_dict
-		
+	def fader(self):
+# 		print 'Fade loop'
+# 		start_time = time.time()
+				
 		# While now is <= fade end
 			# Fade
 		while datetime.datetime.now() <= self.fade_end_time:
@@ -102,7 +104,7 @@ class Lights(object):
 			time.sleep(0.05)
 
 		self.set_lights(self.fade_end_colour)
-		print 'Fade took: ', time.time() - start_time, ' seconds'
+# 		print 'Fade took: ', time.time() - start_time, ' seconds'
 
 	def set_lights(self, colour):
 		red = int(colour['red'])
