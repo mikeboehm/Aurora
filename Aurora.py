@@ -2,8 +2,6 @@
 
 import datetime, threading, time
 from Lights import Lights
-import os
-os.system('clear')
 
 # Glossary
 # Dawn 		is the first appearance of light in the sky before sunrise. The start of the first sequence (black to red)
@@ -17,14 +15,14 @@ class Aurora(object):
 	def __init__(self):
 		self.lights = Lights()
 		self.next_alarm = False
+		self.keep_running = True
 		# Update settings
 # 		self.settings = self.get_settings()
-
 		
-		
-		# Set alarm thread(s)
-		
-		# @todo Set button toggle callback
+		# Initialise alarm threads so we can test if they're running
+		self.dawn_timer = threading.Timer(1, self.trigger_dawn)
+		self.sunrise_timer = threading.Timer(1, self.trigger_sunrise)
+		self.shutoff_thread = threading.Timer(1, self.trigger_autoshutoff)		
 	
 	# Returns settings from config
 	def get_settings(self):
@@ -40,8 +38,8 @@ class Aurora(object):
 		seconds_to_alarm = self.seconds_till_alarm(dawn)
 		print 'Seconds till dawn: ', seconds_to_alarm
 		
-		dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
-		dawn_timer.start()
+		self.dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
+		self.dawn_timer.start()
 # 		self.threads['dawn'] = dawn
 	
 	# Setup dawn tranistion
@@ -58,8 +56,8 @@ class Aurora(object):
 		sunrise = self.next_alarm['sunrise']['end_time'] - self.next_alarm['sunrise']['duration']
 		seconds_to_sunrise = self.seconds_till_alarm(sunrise)
 		print 'Seconds till sunrise: ', seconds_to_sunrise
-		sunrise_timer = threading.Timer(seconds_to_sunrise, self.trigger_sunrise)
-		sunrise_timer.start()
+		self.sunrise_timer = threading.Timer(seconds_to_sunrise, self.trigger_sunrise)
+		self.sunrise_timer.start()
 # 		time.sleep(10)
 		
 	# Setup sunrise tranistion
@@ -73,8 +71,8 @@ class Aurora(object):
 		self.lights.set_fade(fade)
 
 		# Setup auto-shutoff
-		shutoff_thread = threading.Timer(15, self.trigger_autoshutoff)
-		shutoff_thread.start()
+		self.shutoff_thread = threading.Timer(15, self.trigger_autoshutoff)
+		self.shutoff_thread.start()
 
 	# Execute day routine (shut lights off)
 	def trigger_autoshutoff(self):
@@ -86,6 +84,7 @@ class Aurora(object):
 		
 		# Set tomorrow's alarm
 		# @todo implement
+ 		self.set_alarm() # Dawn triggers again, but it seems to get stuck there.
 	
 	# Returns the number of seconds until an event
 	def seconds_till_alarm(self, end_time, start_time = datetime.datetime.now()):
@@ -117,21 +116,8 @@ class Aurora(object):
 	# Cleans up all running threads
 	def shutdown(self):
 		self.lights.lights_off()
+		self.keep_running = False
+		self.dawn_timer.cancel()
+		self.sunrise_timer.cancel()
+		self.shutoff_thread.cancel()
 
-if __name__ == '__main__':
-	try:
-		aurora = Aurora()
-		aurora.set_alarm()
-		print 'already exited'
-		time.sleep(10)
-	# 	aurora.shutdown()
-		# Main loop
-	# 	while True:
-	# 		print 'sleeping: ', datetime.datetime.now().time()
-	# 		time.sleep(10) # Remember that the set_alarm() returns almost instantly, so the sleep should probably be
-	# 		print 'set up:   ', datetime.datetime.now().time()
-	# 		aurora.set_alarm(aurora.next_alarm)
-	
-	except KeyboardInterrupt:
-		aurora.shutdown()
-		print '#' * 10 + ' Exiting ' + '#' * 10
