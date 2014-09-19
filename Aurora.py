@@ -32,15 +32,16 @@ class Aurora(object):
 	# Creates a Timer thread for the next alarm	
 	def set_alarm(self):
 		# Get next alarm
-		self.next_alarm = self.get_next_alarm()
+		next_alarm = self.get_next_alarm()
 		
-		dawn = self.next_alarm['dawn']['end_time'] - self.next_alarm['dawn']['duration']
+		dawn = next_alarm['dawn']['end_time'] - next_alarm['dawn']['duration']
 		seconds_to_alarm = self.seconds_till_alarm(dawn)
 		print 'Seconds till dawn: ', seconds_to_alarm
 		
 		self.dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
 		self.dawn_timer.start()
 # 		self.threads['dawn'] = dawn
+		self.next_alarm = next_alarm
 	
 	# Setup dawn tranistion
 	# Create a thread for sunrise
@@ -84,10 +85,15 @@ class Aurora(object):
 		
 		# Set tomorrow's alarm
 		# @todo implement
- 		self.set_alarm() # Dawn triggers again, but it seems to get stuck there.
+ 		self.set_alarm() # Dawn triggers again, but it adds more and more delay each time
 	
 	# Returns the number of seconds until an event
-	def seconds_till_alarm(self, end_time, start_time = datetime.datetime.now()):
+	def seconds_till_alarm(self, end_time, start_time = False):
+		if not start_time:
+			print '!start_time'
+			start_time = datetime.datetime.now()
+			
+		print 'End_time:', end_time
  		countdown_to_alarm = end_time - start_time
 		return countdown_to_alarm.total_seconds()
 	
@@ -96,12 +102,18 @@ class Aurora(object):
 	def get_next_alarm(self):
 		# @todo Implement this properly
 		duration = datetime.timedelta(seconds=10)
-		sunrise_end = datetime.datetime.now() + datetime.timedelta(seconds=21)
+		now = datetime.datetime.now()		
+		sunrise_end = now + datetime.timedelta(seconds=21)
 		dawn_end = sunrise_end - duration
 		day_ends = sunrise_end + duration
 
-		print 'Sunrise end:', sunrise_end
-		print 'Dawn end:', dawn_end
+# 		print '@' * 20
+# 		print 'Now:', now
+# 		print 'Sunrise end:', sunrise_end
+# 		print 'Dawn end:', dawn_end
+# 		print 'Duration:', duration
+		
+		print now, sunrise_end, dawn_end, duration
 		
 		dawn = {'end_time': dawn_end, 'duration': duration}
 		sunrise = {'end_time': sunrise_end, 'duration': duration}		

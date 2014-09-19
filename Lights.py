@@ -83,7 +83,11 @@ class Lights(object):
 		# Start fade loop
 		self.fade_loop = Thread(target=self.fader)
 		self.fade_loop.start()
-		
+	
+	# Returns the values that set_fade sets
+	def get_fade(self):
+		return {'fade_end_time': self.fade_end_time, 'fade_total_duration': self.fade_total_duration, 'fade_diffs_dict': self.fade_diffs_dict, 'fade_end_colour': self.fade_end_colour}
+
 		
 	def fader(self):
 # 		print 'Fade loop'

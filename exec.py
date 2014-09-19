@@ -5,6 +5,13 @@ import time
 import os
 os.system('clear')
 
+def print_next_alarm(aurora):
+	time.sleep(2)
+	next_alarm = aurora.get_next_alarm()
+# 	print '&' * 30
+# 	print 'GOT NEXT ALARM: ', next_alarm
+# 	print '&' * 30
+
 
 if __name__ == '__main__':
 	try:
@@ -13,6 +20,7 @@ if __name__ == '__main__':
 		while aurora.keep_running == True:
 # 			print 'loop'
 			time.sleep(10)
+# 			print_next_alarm(aurora)
 	# 	aurora.shutdown()
 		# Main loop
 	# 	while True:
