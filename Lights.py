@@ -179,3 +179,8 @@ class Lights(object):
 			self.lights_on()
 			self.light_state = True
 		print 'toggle_light_callback'
+	
+	def shutdown(self):
+		pass	
+# 		print 'GPIO cleanup'
+# 		GPIO.cleanup()
