@@ -33,8 +33,7 @@ class Aurora(object):
 	def set_alarm(self):
 		# Get next alarm
 		next_alarm = self.get_next_alarm()
-		print 'Sunrise:', next_alarm['sunrise']['end_time']
-		
+		print 'Sunrise:', next_alarm['sunrise']['end_time']		
 		
 		dawn = next_alarm['dawn']['end_time'] - next_alarm['dawn']['duration']
 		seconds_to_alarm = self.seconds_till_alarm(dawn)
@@ -126,9 +125,9 @@ class Aurora(object):
 		while int(alarm_day.strftime("%w")) is not day_number:
 			alarm_day += increment
 				
-		dawn_duration = datetime.timedelta(seconds=10)
-		sunrise_duration = datetime.timedelta(seconds=10)
-		auto_shutoff_delay = datetime.timedelta(seconds=10)
+		dawn_duration = datetime.timedelta(minutes=7)
+		sunrise_duration = datetime.timedelta(minutes=8)
+		auto_shutoff_delay = datetime.timedelta(minutes=60)
 
 		year = alarm_day.strftime("%Y")
 		month = alarm_day.strftime("%m")
