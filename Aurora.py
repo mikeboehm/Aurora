@@ -49,8 +49,10 @@ class Aurora(object):
 	def trigger_dawn(self):
 		print 'trigger_dawn'
 		# Fade
+		# @todo Put colour into config file
 		end_colour = {'red': 4095, 'green': 0, 'blue': 0}
-		duration = datetime.timedelta(seconds = 5)
+# 		duration = datetime.timedelta(seconds = 5)
+		duration = self.next_alarm['dawn']['duration']
 
 		fade = {'end_colour': end_colour, 'duration': duration}
 		self.lights.set_fade(fade)
@@ -66,14 +68,19 @@ class Aurora(object):
 	# Create a thread for day
 	def trigger_sunrise(self):
 		print 'trigger_sunrise'
-
+		
+		# @todo Put colour into config file
 		end_colour = {'red': 4095, 'green': 4095, 'blue': 4095}
-		duration = datetime.timedelta(seconds = 10)
+# 		duration = datetime.timedelta(seconds = 10)
+		duration = self.next_alarm['sunrise']['duration']
 		fade = {'end_colour': end_colour, 'duration': duration}
 		self.lights.set_fade(fade)
 
 		# Setup auto-shutoff
-		self.shutoff_thread = threading.Timer(15, self.trigger_autoshutoff)
+		day_ends = self.next_alarm['day']['end_time']
+		seconds_of_day = self.seconds_till_alarm(day_ends)
+		print 'seconds_of_day', seconds_of_day
+		self.shutoff_thread = threading.Timer(seconds_of_day, self.trigger_autoshutoff)
 		self.shutoff_thread.start()
 
 	# Execute day routine (shut lights off)
@@ -105,6 +112,7 @@ class Aurora(object):
 	# 5	Friday
 	# 6	Saturday	
 	def get_alarm_for_day_number(self, day_number):
+		day_number = int(day_number)
 		if day_number > 6:
 			day_number = 0
 		now = datetime.datetime.now()		
@@ -112,8 +120,8 @@ class Aurora(object):
 								
 		# @todo read from config file instead
 		if(day_number == 0 or day_number == 6) :
-			hour = 9
-			minutes = 0
+			hour = 23
+			minutes = 42
 		else :
 			hour = 7
 			minutes = 0
@@ -125,9 +133,9 @@ class Aurora(object):
 		while int(alarm_day.strftime("%w")) is not day_number:
 			alarm_day += increment
 				
-		dawn_duration = datetime.timedelta(minutes=7)
-		sunrise_duration = datetime.timedelta(minutes=8)
-		auto_shutoff_delay = datetime.timedelta(minutes=60)
+		dawn_duration = datetime.timedelta(minutes=2)
+		sunrise_duration = datetime.timedelta(minutes=2)
+		auto_shutoff_delay = datetime.timedelta(minutes=2)
 
 		year = alarm_day.strftime("%Y")
 		month = alarm_day.strftime("%m")
@@ -161,7 +169,8 @@ class Aurora(object):
 			print "now >= today_alarm['sunrise']['end_time'])"
 			day_number = int(now.strftime("%w"))
 			next_alarm = self.get_alarm_for_day_number(day_number + 1)
-		else :
+		else :			
+			print now, today_alarm['sunrise']['end_time']
 			next_alarm = today_alarm
 
 		return next_alarm
