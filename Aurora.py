@@ -120,8 +120,8 @@ class Aurora(object):
 								
 		# @todo read from config file instead
 		if(day_number == 0 or day_number == 6) :
-			hour = 23
-			minutes = 42
+			hour = 8
+			minutes = 30
 		else :
 			hour = 7
 			minutes = 0
@@ -133,9 +133,9 @@ class Aurora(object):
 		while int(alarm_day.strftime("%w")) is not day_number:
 			alarm_day += increment
 				
-		dawn_duration = datetime.timedelta(minutes=2)
-		sunrise_duration = datetime.timedelta(minutes=2)
-		auto_shutoff_delay = datetime.timedelta(minutes=2)
+		dawn_duration = datetime.timedelta(minutes=15)
+		sunrise_duration = datetime.timedelta(minutes=15)
+		auto_shutoff_delay = datetime.timedelta(minutes=60)
 
 		year = alarm_day.strftime("%Y")
 		month = alarm_day.strftime("%m")
@@ -172,7 +172,25 @@ class Aurora(object):
 		else :			
 			print now, today_alarm['sunrise']['end_time']
 			next_alarm = today_alarm
-
+		
+		# Demo mode ######################
+# 		dawn_duration = datetime.timedelta(minutes=1)
+# 		sunrise_duration = datetime.timedelta(minutes=1)
+# 		auto_shutoff_delay = datetime.timedelta(minutes=1)
+# 		
+# 		sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
+# 		
+# 		sunrise_end = datetime.datetime.now() + sunrise_delay
+# 		dawn_end = sunrise_end - sunrise_duration
+# 		day_ends = sunrise_end + auto_shutoff_delay
+# 						
+# 		dawn = {'end_time': dawn_end, 'duration': dawn_duration}
+# 		sunrise = {'end_time': sunrise_end, 'duration': sunrise_duration}		
+# 		day = {'end_time': day_ends}
+# 		return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
+		
+		# END DEMO MODE ##################
+		
 		return next_alarm
 
 	# Cleans up all running threads

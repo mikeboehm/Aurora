@@ -39,6 +39,7 @@ class Lights(object):
 		# Reading light settings
 		self.light_state = False
 		reading_light = {'red': 255, 'green': 25, 'blue': 0}
+# 		reading_light = {'red': 255, 'green': 255, 'blue': 255}
 		# Convert 8-bit colour to 12-bit (for PWM)
 		self.reading_light = {'red': reading_light['red'] * 16, 'green': reading_light['green'] * 16, 'blue': reading_light['blue'] * 16}
 # 		self.reading_light['red'] = self.reading_light['red'] * 16
@@ -105,7 +106,7 @@ class Lights(object):
 			colour = self.fade_colours(self.fade_diffs_dict, percent_remaining, current_lights)
 			self.set_lights(colour)
 		
-			time.sleep(0.05)
+			time.sleep(0.0001)
 
 		self.set_lights(self.fade_end_colour)
 # 		print 'Fade took: ', time.time() - start_time, ' seconds'
