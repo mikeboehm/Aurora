@@ -119,12 +119,13 @@ class Aurora(object):
 		today_number = int(now.strftime("%w"))		
 								
 		# @todo read from config file instead
+		# Weekend
 		if(day_number == 0 or day_number == 6) :
-			hour = 8
+			hour = 9
 			minutes = 30
 		else :
-			hour = 7
-			minutes = 0
+			hour = 6
+			minutes = 45
 		
 		alarm_day = now
 		# Calculate date based on difference between day numbers
