@@ -20,14 +20,6 @@ if __name__ == '__main__':
 		while aurora.keep_running == True:
 # 			print 'loop'
 			time.sleep(10)
-# 			print_next_alarm(aurora)
-	# 	aurora.shutdown()
-		# Main loop
-	# 	while True:
-	# 		print 'sleeping: ', datetime.datetime.now().time()
-	# 		time.sleep(10) # Remember that the set_alarm() returns almost instantly, so the sleep should probably be
-	# 		print 'set up:   ', datetime.datetime.now().time()
-	# 		aurora.set_alarm(aurora.next_alarm)
 	
 	except KeyboardInterrupt:
 		aurora.shutdown()
