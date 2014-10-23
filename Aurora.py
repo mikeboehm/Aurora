@@ -33,7 +33,7 @@ class Aurora(object):
 	        host='localhost'))
 		channel = connection.channel()
 		
-		channel.queue_declare(queue='hello')
+		channel.queue_declare(queue='aurora')
 		
 		print ' [*] Waiting for messages. To exit press CTRL+C'
 		
