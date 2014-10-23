@@ -173,13 +173,16 @@ class Lights(object):
 
 	# Callback from push-button press to toggle reading lights
 	def toggle_light_callback(self, channel):
+		self.toggle_lights()
+	
+	def toggle_lights(self):
 		if self.light_state:
 			self.lights_off()
 			self.light_state = False
 		else:
 			self.lights_on()
 			self.light_state = True
-		print 'toggle_light_callback'
+		print 'toggle_lights'
 	
 	def shutdown(self):
 		pass	
