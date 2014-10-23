@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import datetime, threading, time
+import pika
 from Lights import Lights
 
 # Glossary
@@ -22,7 +23,34 @@ class Aurora(object):
 		# Initialise alarm threads so we can test if they're running
 		self.dawn_timer = threading.Timer(1, self.trigger_dawn)
 		self.sunrise_timer = threading.Timer(1, self.trigger_sunrise)
-		self.shutoff_thread = threading.Timer(1, self.trigger_autoshutoff)		
+		self.shutoff_thread = threading.Timer(1, self.trigger_autoshutoff)
+		
+		self.rabbit_listener_thread = threading.Thread(target=self.rabbit_listner)
+		self.rabbit_listener_thread.start()
+
+	def rabbit_listner(self):
+		connection = pika.BlockingConnection(pika.ConnectionParameters(
+	        host='localhost'))
+		channel = connection.channel()
+		
+		channel.queue_declare(queue='hello')
+		
+		print ' [*] Waiting for messages. To exit press CTRL+C'
+		
+		
+		channel.basic_consume(self.rabbit_callback,
+			queue='hello',
+			no_ack=True)
+		
+		channel.start_consuming()
+
+	
+
+	def rabbit_callback(self, ch, method, properties, body):
+	    print " [x] Received %r" % (body,)
+	    self.lights.toggle_lights()
+
+		
 	
 	# Returns settings from config
 	def get_settings(self):
@@ -201,5 +229,6 @@ class Aurora(object):
 		self.dawn_timer.cancel()
 		self.sunrise_timer.cancel()
 		self.shutoff_thread.cancel()
+		self.rabbit_listener_thread.join()
 # 		self.lights.shutdown()
 
