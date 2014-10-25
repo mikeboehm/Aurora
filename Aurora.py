@@ -13,8 +13,8 @@ from Lights import Lights
 
 
 class Aurora(object):
-	def __init__(self):
-		self.lights = Lights()
+	def __init__(self, lights):
+		self.lights = lights
 		self.next_alarm = False
 		self.keep_running = True
 		# Update settings
