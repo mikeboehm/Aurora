@@ -2,6 +2,7 @@
 
 from Aurora import Aurora
 from Lights import Lights
+from Settings import Settings
 import time
 import os
 os.system('clear')
@@ -17,6 +18,7 @@ def print_next_alarm(aurora):
 if __name__ == '__main__':
 	try:
 		lights = Lights()
+		settings = Settings()
 		aurora = Aurora(lights)
  		aurora.set_alarm()
 		while aurora.keep_running == True:
