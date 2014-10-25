@@ -39,7 +39,7 @@ class Aurora(object):
 		
 		
 		channel.basic_consume(self.rabbit_callback,
-			queue='hello',
+			queue='aurora',
 			no_ack=True)
 		
 		channel.start_consuming()
