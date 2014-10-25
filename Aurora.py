@@ -13,8 +13,9 @@ from Lights import Lights
 
 
 class Aurora(object):
-	def __init__(self, lights):
+	def __init__(self, lights, settings):
 		self.lights = lights
+		self.settings = settings
 		self.next_alarm = False
 		self.keep_running = True
 		# Update settings
@@ -145,16 +146,12 @@ class Aurora(object):
 			day_number = 0
 		now = datetime.datetime.now()		
 		today_number = int(now.strftime("%w"))		
-								
-		# @todo read from config file instead
-		# Weekend
-		if(day_number == 0 or day_number == 6) :
-			hour = 9
-			minutes = 30
-		else :
-			hour = 6
-			minutes = 45
 		
+		alarm = self.settings.get_alarm_for_day(today_number)
+		
+		hour = alarm['hour']
+		minutes = alarm['minutes']
+				
 		alarm_day = now
 		# Calculate date based on difference between day numbers
 		increment = datetime.timedelta(days=1)
