@@ -22,6 +22,7 @@ if __name__ == '__main__':
 		jsonClient = JsonClient()
 		settings = Settings(jsonClient)
 		aurora = Aurora(lights, settings)
+
  		aurora.set_alarm()
 		while aurora.keep_running == True:
 # 			print 'loop'
