@@ -1,24 +1,49 @@
-import socket
+import socket, time
 from JsonClient import JsonClient
 
 class Settings(object):
 	def __init__(self, JsonClient):
+		self.JsonClient = JsonClient
+		
 		hostname = self.get_hostname()
 		port = 5000
 		path = '/get_settings'
 		self.url = "http://%s:%d%s" % (hostname, port, path)
-		self.JsonClient = JsonClient
-		self.settings = self.refresh_settings()
+		
+		self.retry_count = 0
 
+		self.settings = self.refresh_settings()		
+		
 	def get_settings(self):
 		return self.settings
 
 	def set_settings(self, settings):
 		self.settings = settings
+	
+	def get_settings_from_json(self):
+		try:
+			return self.JsonClient.get(self.url)
+		except IOError:
+			return false
 
+	
 	def refresh_settings(self):
-		settings = self.JsonClient.get(self.url)
+		settings = self.get_settings_from_json()
+		
+		while not settings:
+			print 'RETRY' * 20
+			time.sleep(1)
+			settings = self.get_settings_from_json()
+		
 		self.set_settings(settings)
+		return settings
+			
+			
+	def get_settings_from_json(self):
+		try:
+			settings = self.JsonClient.get(self.url)
+		except IOError:
+			settings = False
 		return settings
 
 	def get_alarms(self):
