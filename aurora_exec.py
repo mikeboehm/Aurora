@@ -4,6 +4,7 @@ from Aurora import Aurora
 from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
+from GPIOController import GPIOController
 import time
 import os
 os.system('clear')
@@ -18,7 +19,8 @@ def print_next_alarm(aurora):
 
 if __name__ == '__main__':
 	try:
-		lights = Lights()
+		gpio_controller = GPIOController()
+		lights = Lights(gpio_controller)
 		jsonClient = JsonClient()
 		settings = Settings(jsonClient)
 		aurora = Aurora(lights, settings)

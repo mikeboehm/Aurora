@@ -22,13 +22,13 @@ class GPIOController(object):
 		self.green_pin = 2
 		self.blue_pin = 3
 	
-	def set_button_callback(self, parent):
+	def set_parent(self, parent):
 		self.parent = parent
 		# Setup push-button callback
 		GPIO.add_event_detect(self.BUTTON_1, GPIO.FALLING, callback=self.parent.toggle_light_callback, bouncetime=300)
 
 	
-	def set_lights(self, colour):
+	def set_lights(self, red, green, blue):
 		self.pwm.setPWM(self.red_pin, 0 , red)
 		self.pwm.setPWM(self.green_pin, 0, green)
 		self.pwm.setPWM(self.blue_pin, 0, blue)
