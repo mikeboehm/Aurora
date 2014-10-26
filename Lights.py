@@ -10,10 +10,10 @@
 # 	5		Green Pin
 # 	6		Blue Pin
 
-from Adafruit_PWM_Servo_Driver import PWM
+# from Adafruit_PWM_Servo_Driver import PWM
 import time, datetime, math
 from threading import Thread
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 
 
 class Lights(object):
@@ -28,7 +28,6 @@ class Lights(object):
 		GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=self.toggle_light_callback, bouncetime=300)
 
 		# PWM config
-# 		self.pwm = PWM(0x40, debug=True)
 		self.pwm = PWM(0x40, debug=False)
 		self.freq = 10
 		self.pwm.setPWMFreq(self.freq)
