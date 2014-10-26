@@ -2,13 +2,13 @@ from Adafruit_PWM_Servo_Driver import PWM
 import RPi.GPIO as GPIO
 
 class GPIOController(object):
-	def __init__(self, parent):
-		self.parent = parent
+	def __init__(self):
+# 		self.parent = parent
 		
 		# Setup GPIO for reading light button
 		GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
 		self.BUTTON_1 = 17           # Sets our input pin
-		GPIO.setup(BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set our input pin to be an input, with internal pullup resistor on
+		GPIO.setup(self.BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set our input pin to be an input, with internal pullup resistor on
 
 		# Setup push-button callback
 # 		GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=self.parent.toggle_light_callback, bouncetime=300)
