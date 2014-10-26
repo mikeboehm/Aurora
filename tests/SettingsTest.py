@@ -3,6 +3,8 @@ import unittest, os, sys
 # from unittest.mock import MagicMock
 sys.path.append(os.path.abspath('..'))
 
+import datetime
+
 import Settings
 from JsonClient import JsonClient
 
@@ -12,6 +14,10 @@ class TestSettings(unittest.TestCase):
 		self.settings = Settings.Settings(json_client)
 		
 	def test_get_settings(self):
+		now = datetime.datetime.now()		
+		day_number = now.strftime("%w")
+		print 'day number: ' , day_number
+		
 		settings = self.settings.get_settings()
 		print settings
 	
