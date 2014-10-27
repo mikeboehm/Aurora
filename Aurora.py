@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import datetime, threading, time
+import datetime, threading, time, syslog
 import pika
 from Lights import Lights
 
@@ -28,7 +28,14 @@ class Aurora(object):
 		
 		self.rabbit_listener_thread = threading.Thread(target=self.rabbit_listner)
 		self.rabbit_listener_thread.start()
+		
+	def log(self, message):
+		# Define identifier
+		syslog.openlog("Aurora")
+		# Record a message
+		syslog.syslog(syslog.LOG_ALERT, message)
 
+		
 	def rabbit_listner(self):
 		connection = pika.BlockingConnection(pika.ConnectionParameters(
 	        host='localhost'))
@@ -49,6 +56,7 @@ class Aurora(object):
 
 	def rabbit_callback(self, ch, method, properties, body):
 	    print " [x] Received %r" % (body,)
+	    self.log(body)
 	    self.lights.toggle_lights()
 
 		
@@ -63,10 +71,13 @@ class Aurora(object):
 		# Get next alarm
 		next_alarm = self.get_next_alarm()
 		print 'Sunrise:', next_alarm['sunrise']['end_time']		
+		self.log('Sunrise:' + str(next_alarm['sunrise']['end_time']))
+		
 		
 		dawn = next_alarm['dawn']['end_time'] - next_alarm['dawn']['duration']
 		seconds_to_alarm = self.seconds_till_alarm(dawn)
 		print 'Seconds till dawn: ', seconds_to_alarm
+		self.log('Seconds till dawn: ' + str(seconds_to_alarm))
 		
 		self.dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
 		self.dawn_timer.start()
