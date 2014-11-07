@@ -1,43 +1,12 @@
-### GPIO Hardware Pins ###
-#	1	3.3v
-#	3	SDA0		I2C	Data pin (SDA)
-#	5	SCL0		I2C Clock	(SCL)
-#	14	GND
-#	17	# 17		Button/Switch
-
-###	PMW channels ###
-# 	4		Red Pin
-# 	5		Green Pin
-# 	6		Blue Pin
-
-# from Adafruit_PWM_Servo_Driver import PWM
 import time, datetime, math
 from threading import Thread
-# import RPi.GPIO as GPIO
 
-
-class Lights(object):
-	def __init__(self, gpio_controller):
-		self.gpio_controller = gpio_controller
-		self.gpio_controller.set_parent(self)
-# 		self.red_pin = 1
-# 		self.green_pin = 2
-# 		self.blue_pin = 3		
-		pins = {
-			'red_pin' : 1,
-			'green_pin' : 2,
-			'blue_pin' : 3,
-		}
-		
-		# Reading light settings
-		self.light_state = False
-		reading_light = {'red': 255, 'green': 25, 'blue': 0}
-# 		reading_light = {'red': 255, 'green': 255, 'blue': 255}
-		# Convert 8-bit colour to 12-bit (for PWM)
-		self.reading_light = {'red': reading_light['red'] * 16, 'green': reading_light['green'] * 16, 'blue': reading_light['blue'] * 16}
-# 		self.reading_light['red'] = self.reading_light['red'] * 16
-# 		self.reading_light['green'] = reading_light['green'] * 16
-# 		self.reading_light['blue'] = reading_light['blue'] * 16
+class Lifx(object):
+	reading_light = {'red': 255, 'green': 25, 'blue': 0}
+	light_state = False
+	url = 'http://localhost:56780/'
+	
+	def __init__(self):		
 		self.reading_light_duration = datetime.timedelta(seconds=1)
 		
 		black = {'red': 0, 'green': 0, 'blue': 0}
