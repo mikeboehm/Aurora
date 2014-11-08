@@ -1,4 +1,9 @@
-import socket, json, colorsys, urllib2
+#!/usr/bin/python
+import socket
+import json
+import urllib2
+
+
 class LifxBulb(object):
     url = ''
     PORT = 56780
@@ -7,7 +12,6 @@ class LifxBulb(object):
         self.JsonClient = JsonClient
 
         self.hostname = self.get_hostname()
-
 
     def set_colour(self, colour):
         self.do_request('PUT', '/lights/all/color', colour)
@@ -26,15 +30,13 @@ class LifxBulb(object):
         else:
             request = urllib2.Request(url)
 
-
         request.add_header('Content-Type', 'application/json')
         request.get_method = lambda: request_type
-        response = opener.open(request)
-
+        opener.open(request)
 
     def get_lights(self):
+        # method = 'GET'
         path = '/lights'
-        method = 'GET'
 
         return self.get_url(path)
 
@@ -50,21 +52,16 @@ class LifxBulb(object):
 
         return self.do_request('PUT', path, body)
 
-
     def get_url(self, path):
         url = "http://%s:%d%s" % (self.hostname, self.PORT, path)
         try:
-            json = self.JsonClient.get(url)
+            json_response = self.JsonClient.get(url)
         except IOError:
-            settings = False
-        return json
+            json_response = False
+        return json_response
 
-    def put(self, path):
-        url = "http://%s:%d%s" % (self.hostname, self.PORT, path)
-
-        PUT /lights/{selector}/on
-
-    def get_hostname(self):
+    @staticmethod
+    def get_hostname():
         # Generate hostname
         bonjour_address = socket.gethostname()
         # If IP address, use as is
