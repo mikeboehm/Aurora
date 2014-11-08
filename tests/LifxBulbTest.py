@@ -65,7 +65,6 @@ class TestSettings(unittest.TestCase):
         self.assertEquals(red['brightness'], lights[0]['color']['brightness'])
         self.assertEquals(red['kelvin'], lights[0]['color']['kelvin'])
 
-
         duration = 0.5
         white = {
             "hue": 0,
