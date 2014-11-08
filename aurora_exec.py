@@ -16,6 +16,7 @@ def print_next_alarm(aurora):
 # 	print 'GOT NEXT ALARM: ', next_alarm
 # 	print '&' * 30
 
+log_name = 'Aurora'
 
 if __name__ == '__main__':
 	try:
