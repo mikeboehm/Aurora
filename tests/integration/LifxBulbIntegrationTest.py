@@ -31,13 +31,14 @@ class TestSettings(unittest.TestCase):
 			"duration": duration, 
 			"saturation" : 1, 
 			"brightness" : 1,
-			"kelvin": 2500
+			"kelvin": 2500			
 		}	
 		self.lifx_bulb.set_colour(red)
 		time.sleep(duration + delay)
 		
 		# Test red
 		lights = self.lifx_bulb.get_lights()
+		print lights
 		self.assertEquals(red['hue'], lights[0]['color']['hue'])
 		self.assertEquals(red['saturation'], lights[0]['color']['saturation'])
 		self.assertEquals(red['brightness'], lights[0]['color']['brightness'])
