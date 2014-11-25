@@ -8,6 +8,7 @@ from GPIOController import GPIOController
 from Lifx import Lifx
 import time
 import os
+import requests
 os.system('clear')
 
 def print_next_alarm(aurora):
@@ -26,7 +27,9 @@ if __name__ == '__main__':
 
         jsonClient = JsonClient()
         settings = Settings(jsonClient)
-        lifx = Lifx()
+
+        request = requests()
+        lifx = Lifx(request )
 
         aurora = Aurora(lights, settings, lifx)
 
