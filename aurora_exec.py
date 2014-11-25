@@ -5,6 +5,7 @@ from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
 from GPIOController import GPIOController
+from Lifx import Lifx
 import time
 import os
 os.system('clear')
@@ -22,9 +23,12 @@ if __name__ == '__main__':
     try:
         gpio_controller = GPIOController()
         lights = Lights(gpio_controller)
+
         jsonClient = JsonClient()
         settings = Settings(jsonClient)
-        aurora = Aurora(lights, settings)
+        lifx = Lifx()
+
+        aurora = Aurora(lights, settings, lifx)
 
         aurora.set_alarm()
         while aurora.keep_running == True:

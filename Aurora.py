@@ -13,11 +13,12 @@ from Lights import Lights
 
 
 class Aurora(object):
-    def __init__(self, lights, settings):
+    def __init__(self, lights, settings, lifx_controller):
         self.lights = lights
         self.settings = settings
         self.next_alarm = False
         self.keep_running = True
+        self.lifx_controller = lifx_controller
         # Update settings
 # 		self.settings = self.get_settings()
 
@@ -97,6 +98,9 @@ class Aurora(object):
         fade = {'end_colour': end_colour, 'duration': duration}
         self.lights.set_fade(fade)
 
+        self.lifx_controller.turn_on()
+        self.lifx_controller.fade(self.lifx_controller.DAWN, duration)
+
         sunrise = self.next_alarm['sunrise']['end_time'] - self.next_alarm['sunrise']['duration']
         seconds_to_sunrise = self.seconds_till_alarm(sunrise)
         print 'Seconds till sunrise: ', seconds_to_sunrise
@@ -116,6 +120,8 @@ class Aurora(object):
         fade = {'end_colour': end_colour, 'duration': duration}
         self.lights.set_fade(fade)
 
+        self.lifx_controller.fade(self.lifx_controller.SUNRISE, duration)
+
         # Setup auto-shutoff
         day_ends = self.next_alarm['day']['end_time']
         seconds_of_day = self.seconds_till_alarm(day_ends)
@@ -130,6 +136,9 @@ class Aurora(object):
         duration = datetime.timedelta(seconds = 2)
         fade = {'end_colour': end_colour, 'duration': duration}
         self.lights.set_fade(fade)
+
+        self.lifx_controller.fade(self.lifx_controller.NIGHT, duration)
+        self.lifx_controller.turn_off()
 
         # Set tomorrow's alarm
         # @todo implement
