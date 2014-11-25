@@ -28,7 +28,7 @@ if __name__ == '__main__':
         jsonClient = JsonClient()
         settings = Settings(jsonClient)
 
-        request = requests()
+        request = requests
         lifx = Lifx(request )
 
         aurora = Aurora(lights, settings, lifx)
