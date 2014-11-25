@@ -211,9 +211,9 @@ class Aurora(object):
 			next_alarm = today_alarm
 		
 		# Demo mode ######################
-# 		dawn_duration = datetime.timedelta(minutes=1)
-# 		sunrise_duration = datetime.timedelta(minutes=1)
-# 		auto_shutoff_delay = datetime.timedelta(minutes=1)
+# 		dawn_duration = datetime.timedelta(seconds=90)
+# 		sunrise_duration = datetime.timedelta(seconds=90)
+# 		auto_shutoff_delay = datetime.timedelta(seconds=5)
 # 		
 # 		sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
 # 		
