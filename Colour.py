@@ -2,7 +2,7 @@ class Colour(object):
     hue = 0
     saturation = 0.0
     brightness = 0.0
-    kelvin = 2600
+    kelvin = 2500
     KELVIN_MIN = 2500
     KELVIN_MAX = 9000
 
@@ -20,3 +20,11 @@ class Colour(object):
             self.kelvin = self.KELVIN_MIN
         elif kelvin > self.KELVIN_MAX:
             self.kelvin = self.KELVIN_MAX
+
+    def get_dict(self):
+        return {
+            'hue': self.hue,
+            'saturation': self.saturation,
+            'brightness': self.brightness,
+            'kelvin': self.kelvin,
+        }
