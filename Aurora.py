@@ -5,11 +5,11 @@ import pika
 from Lights import Lights
 
 # Glossary
-# Dawn 		is the first appearance of light in the sky before sunrise. The start of the first sequence (black to red)
-# Twilight 	is the period between dawn and sunrise
-# Sunrise 	is the time in the morning when the sun appears. The start of the second sequence (red to white)
-# Day 		occurs once the sunrise sequence is complete
-# Daybreak 	could be the term for the event at the end of sunrise?
+# Dawn      is the first appearance of light in the sky before sunrise. The start of the first sequence (black to red)
+# Twilight  is the period between dawn and sunrise
+# Sunrise   is the time in the morning when the sun appears. The start of the second sequence (red to white)
+# Day       occurs once the sunrise sequence is complete
+# Daybreak  could be the term for the event at the end of sunrise?
 
 
 class Aurora(object):
@@ -20,7 +20,7 @@ class Aurora(object):
         self.keep_running = True
         self.lifx_controller = lifx_controller
         # Update settings
-# 		self.settings = self.get_settings()
+#       self.settings = self.get_settings()
 
         # Initialise alarm threads so we can test if they're running
         self.dawn_timer = threading.Timer(1, self.trigger_dawn)
@@ -82,7 +82,7 @@ class Aurora(object):
 
         self.dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
         self.dawn_timer.start()
-# 		self.threads['dawn'] = dawn
+#       self.threads['dawn'] = dawn
         self.next_alarm = next_alarm
 
     # Setup dawn tranistion
@@ -92,7 +92,7 @@ class Aurora(object):
         # Fade
         # @todo Put colour into config file
         end_colour = {'red': 4095, 'green': 0, 'blue': 0}
-# 		duration = datetime.timedelta(seconds = 5)
+#       duration = datetime.timedelta(seconds = 5)
         duration = self.next_alarm['dawn']['duration']
 
         fade = {'end_colour': end_colour, 'duration': duration}
@@ -106,7 +106,7 @@ class Aurora(object):
         print 'Seconds till sunrise: ', seconds_to_sunrise
         self.sunrise_timer = threading.Timer(seconds_to_sunrise, self.trigger_sunrise)
         self.sunrise_timer.start()
-# 		time.sleep(10)
+#       time.sleep(10)
 
     # Setup sunrise tranistion
     # Create a thread for day
@@ -115,7 +115,7 @@ class Aurora(object):
 
         # @todo Put colour into config file
         end_colour = {'red': 4095, 'green': 4095, 'blue': 4095}
-# 		duration = datetime.timedelta(seconds = 10)
+#       duration = datetime.timedelta(seconds = 10)
         duration = self.next_alarm['sunrise']['duration']
         fade = {'end_colour': end_colour, 'duration': duration}
         self.lights.set_fade(fade)
@@ -155,11 +155,11 @@ class Aurora(object):
     # Returns alarm for day of the week
     # 0 is Sunday
     # 1 Monday
-    # 2	Tuesday
-    # 3	Wednesday
-    # 4	Thursday
-    # 5	Friday
-    # 6	Saturday
+    # 2 Tuesday
+    # 3 Wednesday
+    # 4 Thursday
+    # 5 Friday
+    # 6 Saturday
     def get_alarm_for_day_number(self, day_number):
         day_number = int(day_number)
         if day_number > 6:
@@ -220,20 +220,20 @@ class Aurora(object):
             next_alarm = today_alarm
 
         # Demo mode ######################
-# 		dawn_duration = datetime.timedelta(minutes=1)
-# 		sunrise_duration = datetime.timedelta(minutes=1)
-# 		auto_shutoff_delay = datetime.timedelta(minutes=1)
-# 		
-# 		sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
-# 		
-# 		sunrise_end = datetime.datetime.now() + sunrise_delay
-# 		dawn_end = sunrise_end - sunrise_duration
-# 		day_ends = sunrise_end + auto_shutoff_delay
-# 						
-# 		dawn = {'end_time': dawn_end, 'duration': dawn_duration}
-# 		sunrise = {'end_time': sunrise_end, 'duration': sunrise_duration}		
-# 		day = {'end_time': day_ends}
-# 		return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
+#       dawn_duration = datetime.timedelta(minutes=1)
+#       sunrise_duration = datetime.timedelta(minutes=1)
+#       auto_shutoff_delay = datetime.timedelta(minutes=1)
+#       
+#       sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
+#       
+#       sunrise_end = datetime.datetime.now() + sunrise_delay
+#       dawn_end = sunrise_end - sunrise_duration
+#       day_ends = sunrise_end + auto_shutoff_delay
+#                       
+#       dawn = {'end_time': dawn_end, 'duration': dawn_duration}
+#       sunrise = {'end_time': sunrise_end, 'duration': sunrise_duration}       
+#       day = {'end_time': day_ends}
+#       return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
 
         # END DEMO MODE ##################
 
@@ -247,5 +247,5 @@ class Aurora(object):
         self.sunrise_timer.cancel()
         self.shutoff_thread.cancel()
         self.rabbit_listener_thread.join()
-# 		self.lights.shutdown()
+#       self.lights.shutdown()
 

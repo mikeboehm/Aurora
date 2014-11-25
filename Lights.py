@@ -1,14 +1,14 @@
 ### GPIO Hardware Pins ###
-#	1	3.3v
-#	3	SDA0		I2C	Data pin (SDA)
-#	5	SCL0		I2C Clock	(SCL)
-#	14	GND
-#	17	# 17		Button/Switch
+#   1   3.3v
+#   3   SDA0        I2C Data pin (SDA)
+#   5   SCL0        I2C Clock   (SCL)
+#   14  GND
+#   17  # 17        Button/Switch
 
-###	PMW channels ###
-# 	4		Red Pin
-# 	5		Green Pin
-# 	6		Blue Pin
+### PMW channels ###
+#   4       Red Pin
+#   5       Green Pin
+#   6       Blue Pin
 
 # from Adafruit_PWM_Servo_Driver import PWM
 import time, datetime, math
@@ -20,9 +20,9 @@ class Lights(object):
     def __init__(self, gpio_controller):
         self.gpio_controller = gpio_controller
         self.gpio_controller.set_parent(self)
-# 		self.red_pin = 1
-# 		self.green_pin = 2
-# 		self.blue_pin = 3		
+#       self.red_pin = 1
+#       self.green_pin = 2
+#       self.blue_pin = 3
         pins = {
             'red_pin' : 1,
             'green_pin' : 2,
@@ -32,12 +32,11 @@ class Lights(object):
         # Reading light settings
         self.light_state = False
         reading_light = {'red': 255, 'green': 25, 'blue': 0}
-# 		reading_light = {'red': 255, 'green': 255, 'blue': 255}
         # Convert 8-bit colour to 12-bit (for PWM)
         self.reading_light = {'red': reading_light['red'] * 16, 'green': reading_light['green'] * 16, 'blue': reading_light['blue'] * 16}
-# 		self.reading_light['red'] = self.reading_light['red'] * 16
-# 		self.reading_light['green'] = reading_light['green'] * 16
-# 		self.reading_light['blue'] = reading_light['blue'] * 16
+#       self.reading_light['red'] = self.reading_light['red'] * 16
+#       self.reading_light['green'] = reading_light['green'] * 16
+#       self.reading_light['blue'] = reading_light['blue'] * 16
         self.reading_light_duration = datetime.timedelta(seconds=1)
 
         black = {'red': 0, 'green': 0, 'blue': 0}
@@ -65,7 +64,7 @@ class Lights(object):
         # Get current light colour
         current_colour = self.get_lights()
 
-# 		print current_colour
+#       print current_colour
 
         # Get colours differences
         self.fade_diffs_dict = self.fade_diffs(current_colour, end_colour)
@@ -84,8 +83,8 @@ class Lights(object):
 
 
     def fader(self):
-# 		print 'Fade loop'
-# 		start_time = time.time()
+#       print 'Fade loop'
+#       start_time = time.time()
 
         # While now is <= fade end
             # Fade
@@ -102,7 +101,7 @@ class Lights(object):
             time.sleep(0.0001)
 
         self.set_lights(self.fade_end_colour)
-# 		print 'Fade took: ', time.time() - start_time, ' seconds'
+#       print 'Fade took: ', time.time() - start_time, ' seconds'
 
     def set_lights(self, colour):
         red = int(colour['red'])
@@ -111,9 +110,9 @@ class Lights(object):
 
         self.gpio_controller.set_lights(red, green, blue)
 
-# 		self.pwm.setPWM(self.red_pin, 0 , red)
-# 		self.pwm.setPWM(self.green_pin, 0, green)
-# 		self.pwm.setPWM(self.blue_pin, 0, blue)
+#       self.pwm.setPWM(self.red_pin, 0 , red)
+#       self.pwm.setPWM(self.green_pin, 0, green)
+#       self.pwm.setPWM(self.blue_pin, 0, blue)
 
         self.current_colour = {'red': red, 'green': green, 'blue': blue}
 
@@ -166,6 +165,7 @@ class Lights(object):
         fade = {'duration': self.reading_light_duration, 'end_colour': self.reading_light}
         self.set_fade(fade)
 
+
     # Callback from push-button press to toggle reading lights
     def toggle_light_callback(self, channel):
         self.toggle_lights()
@@ -181,5 +181,5 @@ class Lights(object):
 
     def shutdown(self):
         pass
-# 		print 'GPIO cleanup'
-# 		GPIO.cleanup()
+#       print 'GPIO cleanup'
+#       GPIO.cleanup()
