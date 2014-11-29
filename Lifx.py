@@ -54,7 +54,7 @@ class Lifx(object):
 
     def fade(self, color, duration):
         url = self.url_buidler(self.ENDPOINT_SET_LIGHTS)
-        color['duration'] = duration
+        color['duration'] = duration.total_seconds()
 
         response = self.requests.put(url, color)
 
