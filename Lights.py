@@ -17,9 +17,10 @@ from threading import Thread
 
 
 class Lights(object):
-    def __init__(self, gpio_controller):
+    def __init__(self, gpio_controller, lifx_controller):
         self.gpio_controller = gpio_controller
         self.gpio_controller.set_parent(self)
+        self.lifx_controller = lifx_controller
 #       self.red_pin = 1
 #       self.green_pin = 2
 #       self.blue_pin = 3
@@ -158,11 +159,18 @@ class Lights(object):
     def lights_off(self):
         end_colour = {'red': 0, 'green': 0, 'blue': 0}
         fade = {'duration': self.reading_light_duration, 'end_colour': end_colour}
+
+        duration_in_seconds = self.reading_light_duration.total_seconds()
+        self.lifx_controller.turn_on()
+        self.lifx_controller.fade(self.lifx_controller.NIGHT, duration_in_seconds)
+
         self.set_fade(fade)
 
     # Turns reading lights on
     def lights_on(self):
         fade = {'duration': self.reading_light_duration, 'end_colour': self.reading_light}
+        duration_in_seconds = self.reading_light_duration.total_seconds()
+        self.lifx_controller.fade(self.lifx_controller.READING_LIGHT, duration_in_seconds)
         self.set_fade(fade)
 
 

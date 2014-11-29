@@ -30,6 +30,13 @@ class Lifx(object):
         'kelvin': 2500
     }
 
+    READING_LIGHT = {
+        'hue': 0,
+        'saturation': 1,
+        'brightness': 0.25,
+        'kelvin': 2500
+    }
+
     def __init__(self, requests):
         self.requests = requests
         pass

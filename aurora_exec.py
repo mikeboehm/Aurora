@@ -22,14 +22,14 @@ log_name = 'Aurora'
 
 if __name__ == '__main__':
     try:
+        request = requests
+        lifx = Lifx(request)
+
         gpio_controller = GPIOController()
-        lights = Lights(gpio_controller)
+        lights = Lights(gpio_controller, lifx)
 
         jsonClient = JsonClient()
         settings = Settings(jsonClient)
-
-        request = requests
-        lifx = Lifx(request )
 
         aurora = Aurora(lights, settings, lifx)
 
