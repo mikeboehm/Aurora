@@ -46,7 +46,7 @@ class LifxClient(object):
     def do_put(self, url, payload=None):
         try:
             response = self.requests.put(url, payload)
-            return response.text
+            return self.convert_response(response.text)
         except Exception as e:
             print '*' * 20
             print e.message
