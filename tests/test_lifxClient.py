@@ -15,8 +15,9 @@ class TestLifxClient(TestCase):
         self.Lifx = LifxClient(request)
 
     def test_toggle(self):
-        pass
-        # self.fail()
+        response = self.Lifx.toggle()
+
+        self.assertIsNot(False, response)
 
     def test_turn_on(self):
         pass
@@ -126,3 +127,17 @@ class TestLifxClient(TestCase):
         url = self.Lifx.url_builder(endpoint)
         url = str(url)
         self.assertTrue(url.endswith(endpoint))
+
+    def test_get_duration_in_seconds(self):
+        seconds_as_integer = 10
+        result = self.Lifx.get_duration_in_seconds(seconds_as_integer)
+        self.assertEquals(seconds_as_integer, result)
+
+        seconds_as_string = '15'
+        result = self.Lifx.get_duration_in_seconds(seconds_as_string)
+        self.assertEquals(seconds_as_string, result)
+
+        td_seconds = 20
+        seconds_as_timedelta = datetime.timedelta(seconds=td_seconds)
+        result = self.Lifx.get_duration_in_seconds(seconds_as_timedelta)
+        self.assertEquals(20, result)

@@ -43,9 +43,20 @@ class LifxClient(object):
         self.requests = requests
         pass
 
+    def do_put(self, url, payload=None):
+        try:
+            response = self.requests.put(url, payload)
+            return response.text
+        except Exception as e:
+            print '*' * 20
+            print e.message
+            print '*' * 20
+
+        return False
+
     def toggle(self):
         url = self.url_builder(self.ENDPOINT_LIGHTS_ON)
-        return self.requests.put(url)
+        return self.do_put(url)
 
 
     def turn_on(self):
