@@ -141,3 +141,12 @@ class TestLifxClient(TestCase):
         seconds_as_timedelta = datetime.timedelta(seconds=td_seconds)
         result = self.Lifx.get_duration_in_seconds(seconds_as_timedelta)
         self.assertEquals(20, result)
+
+    def test_convert_response(self):
+        mock_response = '[{"id":"d073d501f660","label":"","site_id":"4c4946585632","tags":["Bedroom"],"on":false,"color":{"hue":0.0,"saturation":0.0,"brightness":0.010009918364232854,"kelvin":2500},"last_seen":"2014-12-04T22:48:00.512+00:00","seconds_since_seen":2.87203}]'
+        response = self.Lifx.convert_response(mock_response)
+
+        self.assertIsInstance(response, list)
+        self.assertIsInstance(response[0], dict)
+        self.assertTrue(('on' in response[0]))
+        self.assertTrue(('color' in response[0]))

@@ -85,6 +85,9 @@ class LifxClient(object):
 
         return lights
 
+    def convert_response(self, response):
+        return json.loads(response)
+
     def url_builder(self, endpoint):
         return self.BASE_URL + endpoint
 
