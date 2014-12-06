@@ -15,19 +15,31 @@ class TestLifxClient(TestCase):
         self.lifx = LifxClient(request)
 
     def test_toggle(self):
-        response = self.lifx.toggle()
+        current_state = self.lifx.get_lights()
 
-        self.assertIsNot(False, response)
+        current_on_state = current_state[0].get_light_state()
+        print '#' * 20
+        print current_on_state
+        print '#' * 20
+
+        response = self.lifx.toggle()
+        self.assertNotEqual(current_on_state, response[0].get_light_state())
 
     def test_turn_on(self):
+        response = self.lifx.turn_on()
+        self.assertTrue(response[0].get_light_state())
 
-        # self.fail()
 
     def test_turn_off(self):
-        pass
-        # self.fail()
+        response = self.lifx.turn_off()
+        self.assertFalse(response[0].get_light_state())
 
     def test_fade(self):
+        # print '$' * 30
+        # print 'Initial get_Lights'
+        print 'Initial:', self.lifx.get_lights()[0].get_color()
+
+
         red = {
             'hue': 0,
             'saturation': 0.32018,
@@ -41,21 +53,23 @@ class TestLifxClient(TestCase):
             'brightness': 0,
             'kelvin': 2500
         }
-        duration = datetime.timedelta(seconds=2)
-        delay = datetime.timedelta(seconds=1)
-        delay += duration
+        duration = datetime.timedelta(seconds=10)
+        delay = datetime.timedelta(seconds=1) + duration
         self.lifx.turn_on()
         self.lifx.fade(red, duration)
         time.sleep(delay.total_seconds())
-
         lights = self.lifx.get_lights()
-        print '=' * 20
-        print lights
-        print '=' * 20
-        self.assertEquals(red, lights[0].get_color())
+
+        print 'Red    :', lights[0].get_color()
+
+        # self.assertAlmostEquals(round(red['saturation'],4), round(lights[0].get_color()['saturation'],4))
 
         self.lifx.fade(black, duration)
         time.sleep(delay.total_seconds())
+        lights = self.lifx.get_lights()
+        print 'Black  :', lights[0].get_color()
+
+        # self.assertAlmostEquals(round(black['saturation'],4), round(lights[0].get_color()['saturation'],4))
 
 
     def test_sunrise(self):
@@ -147,6 +161,6 @@ class TestLifxClient(TestCase):
         response = self.lifx.convert_response(mock_response)
 
         self.assertIsInstance(response, list)
-        self.assertIsInstance(response[0], dict)
-        self.assertTrue(('on' in response[0]))
-        self.assertTrue(('color' in response[0]))
+        self.assertIsInstance(response[0], Globe)
+        self.assertFalse(response[0].get_light_state())
+        self.assertIsNotNone(response[0].get_color())

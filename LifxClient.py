@@ -54,30 +54,44 @@ class LifxClient(object):
 
         return False
 
+    def do_get(self, url):
+        try:
+            response = self.requests.get(url)
+            # print response.text
+            return self.convert_response(response.text)
+        except Exception as e:
+            print '*' * 20
+            print e.message
+            print '*' * 20
+            return False
+
     def toggle(self):
-        url = self.url_builder(self.ENDPOINT_LIGHTS_ON)
+        url = self.url_builder(self.ENDPOINT_TOGGLE)
         return self.do_put(url)
 
 
     def turn_on(self):
         url = self.url_builder(self.ENDPOINT_LIGHTS_ON)
-        self.requests.put(url)
+        return self.do_put(url)
 
     def turn_off(self):
         url = self.url_builder(self.ENDPOINT_LIGHTS_OFF)
-        self.requests.put(url)
+        return self.do_put(url)
 
     def fade(self, color, duration):
         url = self.url_builder(self.ENDPOINT_SET_LIGHTS)
 
         color['duration'] = self.get_duration_in_seconds(duration)
 
-        response = self.requests.put(url, color)
+        return self.do_put(url, color)
 
     def get_lights(self):
         url = self.url_builder(self.ENDPOINT_GET_LIGHTS)
-        response = self.requests.get(url)
-        lights_dict_array = json.loads(response.text)
+        return self.do_get(url)
+
+    @staticmethod
+    def convert_response(response):
+        lights_dict_array = json.loads(response)
         lights = []
         for light_dict in lights_dict_array:
             light = Globe(light_dict)
@@ -85,16 +99,12 @@ class LifxClient(object):
 
         return lights
 
-    def convert_response(self, response):
-        return json.loads(response)
-
     def url_builder(self, endpoint):
         return self.BASE_URL + endpoint
 
     def get_duration_in_seconds(self, duration):
         if isinstance(duration, datetime.timedelta):
             duration_in_seconds = duration.total_seconds()
-            print type(duration)
         else:
             duration_in_seconds = duration
 
