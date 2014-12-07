@@ -5,6 +5,7 @@ from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
 from GPIOController import GPIOController
+from LifxClient import LifxClient
 from Lifx import Lifx
 import time
 import os
@@ -23,7 +24,9 @@ log_name = 'Aurora'
 if __name__ == '__main__':
     try:
         request = requests
-        lifx = Lifx(request)
+        lifx_client = LifxClient(request)
+        lifx = Lifx(lifx_client)
+
 
         gpio_controller = GPIOController()
         lights = Lights(gpio_controller, lifx)

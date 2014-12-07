@@ -3,6 +3,7 @@
 import datetime, threading, time, syslog
 import pika
 from Lights import Lights
+import Lifx
 
 # Glossary
 # Dawn      is the first appearance of light in the sky before sunrise. The start of the first sequence (black to red)
@@ -13,11 +14,16 @@ from Lights import Lights
 
 
 class Aurora(object):
+    """
+        @type lifx_controller: Lifx.Lifx
+        """
     def __init__(self, lights, settings, lifx_controller):
         self.lights = lights
         self.settings = settings
         self.next_alarm = False
         self.keep_running = True
+
+
         self.lifx_controller = lifx_controller
         # Update settings
 #       self.settings = self.get_settings()
@@ -98,8 +104,8 @@ class Aurora(object):
         fade = {'end_colour': end_colour, 'duration': duration}
         self.lights.set_fade(fade)
 
-        self.lifx_controller.turn_on()
-        self.lifx_controller.fade(self.lifx_controller.DAWN, duration)
+        self.lifx_controller.dawn(duration)
+
 
         sunrise = self.next_alarm['sunrise']['end_time'] - self.next_alarm['sunrise']['duration']
         seconds_to_sunrise = self.seconds_till_alarm(sunrise)
@@ -121,7 +127,7 @@ class Aurora(object):
         self.lights.set_fade(fade)
         
         
-        self.lifx_controller.fade(self.lifx_controller.DAY, duration)
+        self.lifx_controller.sunrise(duration)
 
         # Setup auto-shutoff
         day_ends = self.next_alarm['day']['end_time']
@@ -138,8 +144,7 @@ class Aurora(object):
         fade = {'end_colour': end_colour, 'duration': duration}
         self.lights.set_fade(fade)
 
-        self.lifx_controller.fade(self.lifx_controller.NIGHT, duration)
-        self.lifx_controller.turn_off()
+        self.lifx_controller.shutoff(duration)
 
         # Set tomorrow's alarm
         # @todo implement
