@@ -19,6 +19,13 @@ class Lifx(object):
     }
 
 
+    PRE_DAY = {
+        'hue': 0,
+        'saturation': 0,
+        'brightness': 0,
+        'kelvin': 2500
+    }
+
     DAY = {
         'hue': 0,
         'saturation': 0,
@@ -56,22 +63,25 @@ class Lifx(object):
 
     pre_fade_duration = 1
 
+    """
+    :type lifx_client: LifxClient
+    """
     def __init__(self, lifx_client):
-        """
-        :type lifx_client: LifxClient
-        """
+
         self.client = lifx_client
 
     def dawn(self, dawn_duration):
         self.client.fade(self.PRE_DAWN, self.pre_fade_duration)
+        self.client.turn_on()
         self.client.fade(self.DAWN, dawn_duration)
 
     def sunrise(self, sunrise_duration):
         self.client.fade(self.DAY, sunrise_duration)
 
     def shutoff(self, shutoff_speed):
-        self.client.fade(self.PRE_READING_LIGHT, shutoff_speed)
+        self.client.fade(self.PRE_DAY, shutoff_speed)
         self.client.turn_off()
+        self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)        
     
     def reading_lights_on(self):
         self.client.fade(self.READING_LIGHT, self.pre_fade_duration)
