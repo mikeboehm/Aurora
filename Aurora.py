@@ -16,8 +16,8 @@ import Lifx
 class Aurora(object):
     """
         @type lifx_controller: Lifx.Lifx
-        """
     def __init__(self, lights, settings, lifx_controller):
+    """
         self.lights = lights
         self.settings = settings
         self.next_alarm = False
