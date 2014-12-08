@@ -278,5 +278,3 @@ class Aurora(object):
         self.shutoff_thread.cancel()
         self.rabbit_listener_thread.join()
 #       self.lights.shutdown()
-
-    def toggle_light_callback(self):

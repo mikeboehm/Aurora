@@ -26,7 +26,7 @@ class Lights(object):
         :type lifx_controller: Lifx.Lifx
         """
         self.gpio_controller = gpio_controller
-        self.gpio_controller.set_parent(self)
+#         self.gpio_controller.set_parent(self)
         self.lifx_controller = lifx_controller
 #       self.red_pin = 1
 #       self.green_pin = 2
