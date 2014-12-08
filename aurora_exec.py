@@ -4,7 +4,7 @@ from Aurora import Aurora
 from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
-from GPIOController import GPIOController
+from PwmDriver import PwmDriver
 from LifxClient import LifxClient
 from Lifx import Lifx
 import time
@@ -28,8 +28,8 @@ if __name__ == '__main__':
         lifx = Lifx(lifx_client)
 
 
-        gpio_controller = GPIOController()
-        lights = Lights(gpio_controller, lifx)
+        pwm_driver = PwmDriver()
+        lights = Lights(pwm_driver, lifx)
 
         jsonClient = JsonClient()
         settings = Settings(jsonClient)

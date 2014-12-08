@@ -14,23 +14,20 @@
 import time, datetime, math
 from threading import Thread
 import Lifx
-# import RPi.GPIO as GPIO
 
 
 class Lights(object):
+    black = {'red': 0, 'green': 0, 'blue': 0}
+    fade_end_colour = black
 
-
-    def __init__(self, gpio_controller, lifx_controller):
+    def __init__(self, pwm_driver, lifx_controller):
         """
-        :param gpio_controller:
+        :param pwm_driver:
         :type lifx_controller: Lifx.Lifx
         """
-        self.gpio_controller = gpio_controller
-#         self.gpio_controller.set_parent(self)
+        self.pwm_driver = pwm_driver
         self.lifx_controller = lifx_controller
-#       self.red_pin = 1
-#       self.green_pin = 2
-#       self.blue_pin = 3
+
         pins = {
             'red_pin' : 1,
             'green_pin' : 2,
@@ -41,16 +38,17 @@ class Lights(object):
         self.light_state = False
         reading_light = {'red': 255, 'green': 25, 'blue': 0}
         # Convert 8-bit colour to 12-bit (for PWM)
-        self.reading_light = {'red': reading_light['red'] * 16, 'green': reading_light['green'] * 16, 'blue': reading_light['blue'] * 16}
-#       self.reading_light['red'] = self.reading_light['red'] * 16
-#       self.reading_light['green'] = reading_light['green'] * 16
-#       self.reading_light['blue'] = reading_light['blue'] * 16
+        self.reading_light = {
+            'red': reading_light['red'] * 16,
+            'green': reading_light['green'] * 16,
+            'blue': reading_light['blue'] * 16
+        }
         self.reading_light_duration = datetime.timedelta(seconds=1)
 
-        black = {'red': 0, 'green': 0, 'blue': 0}
+        # black = {'red': 0, 'green': 0, 'blue': 0}
 
         # Set "current_colour" and PWM to black/off
-        self.set_lights(black)
+        self.set_lights(self.black)
 
         # Setup fade values
         end_time = datetime.datetime.now()
@@ -72,8 +70,6 @@ class Lights(object):
         # Get current light colour
         current_colour = self.get_lights()
 
-#       print current_colour
-
         # Get colours differences
         self.fade_diffs_dict = self.fade_diffs(current_colour, end_colour)
 
@@ -91,9 +87,6 @@ class Lights(object):
 
 
     def fader(self):
-#       print 'Fade loop'
-#       start_time = time.time()
-
         # While now is <= fade end
             # Fade
         while datetime.datetime.now() <= self.fade_end_time:
@@ -109,18 +102,13 @@ class Lights(object):
             time.sleep(0.0001)
 
         self.set_lights(self.fade_end_colour)
-#       print 'Fade took: ', time.time() - start_time, ' seconds'
 
     def set_lights(self, colour):
         red = int(colour['red'])
         green = int(colour['green'])
         blue = int(colour['blue'])
 
-        self.gpio_controller.set_lights(red, green, blue)
-
-#       self.pwm.setPWM(self.red_pin, 0 , red)
-#       self.pwm.setPWM(self.green_pin, 0, green)
-#       self.pwm.setPWM(self.blue_pin, 0, blue)
+        self.pwm_driver.set_lights(red, green, blue)
 
         self.current_colour = {'red': red, 'green': green, 'blue': blue}
 

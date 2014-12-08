@@ -2,7 +2,6 @@
 
 import datetime, threading, time, syslog
 import pika
-import Lights
 import Lifx
 import Lights
 import RPi.GPIO as GPIO
@@ -21,7 +20,6 @@ class Aurora(object):
     """
     lights = ''
 
-
     def __init__(self, lights, settings, lifx_controller):
 
         """
@@ -36,9 +34,6 @@ class Aurora(object):
         self.keep_running = True
 
         self.lifx_controller = lifx_controller
-        # self.gpio_controller = gpio_controller
-        # Update settings
-#       self.settings = self.get_settings()
 
         # Initialise alarm threads so we can test if they're running
         self.dawn_timer = threading.Timer(1, self.trigger_dawn)
@@ -66,16 +61,13 @@ class Aurora(object):
         # Record a message
         syslog.syslog(syslog.LOG_ALERT, message)
 
-
     def rabbit_listner(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             host='localhost'))
         channel = connection.channel()
-
         channel.queue_declare(queue='aurora')
 
         print ' [*] Waiting for messages. To exit press CTRL+C'
-
 
         channel.basic_consume(self.rabbit_callback,
             queue='aurora',
@@ -83,14 +75,10 @@ class Aurora(object):
 
         channel.start_consuming()
 
-
-
     def rabbit_callback(self, ch, method, properties, body):
         print " [x] Received %r" % (body,)
         self.log(body)
         self.lights.toggle_lights()
-
-
 
     # Returns settings from config
     def get_settings(self):
@@ -103,7 +91,6 @@ class Aurora(object):
         next_alarm = self.get_next_alarm()
         print 'Sunrise:', next_alarm['sunrise']['end_time']
         self.log('Sunrise:' + str(next_alarm['sunrise']['end_time']))
-
 
         dawn = next_alarm['dawn']['end_time'] - next_alarm['dawn']['duration']
         seconds_to_alarm = self.seconds_till_alarm(dawn)
@@ -122,21 +109,18 @@ class Aurora(object):
         # Fade
         # @todo Put colour into config file
         end_colour = {'red': 4095, 'green': 0, 'blue': 0}
-#       duration = datetime.timedelta(seconds = 5)
+
         duration = self.next_alarm['dawn']['duration']
-
         fade = {'end_colour': end_colour, 'duration': duration}
+
         self.lights.set_fade(fade)
-
         self.lifx_controller.dawn(duration)
-
 
         sunrise = self.next_alarm['sunrise']['end_time'] - self.next_alarm['sunrise']['duration']
         seconds_to_sunrise = self.seconds_till_alarm(sunrise)
         print 'Seconds till sunrise: ', seconds_to_sunrise
         self.sunrise_timer = threading.Timer(seconds_to_sunrise, self.trigger_sunrise)
         self.sunrise_timer.start()
-#       time.sleep(10)
 
     # Setup sunrise tranistion
     # Create a thread for day
@@ -145,12 +129,10 @@ class Aurora(object):
 
         # @todo Put colour into config file
         end_colour = {'red': 4095, 'green': 4095, 'blue': 4095}
-#       duration = datetime.timedelta(seconds = 10)
         duration = self.next_alarm['sunrise']['duration']
         fade = {'end_colour': end_colour, 'duration': duration}
+
         self.lights.set_fade(fade)
-        
-        
         self.lifx_controller.sunrise(duration)
 
         # Setup auto-shutoff
