@@ -2,13 +2,17 @@ from Adafruit_PWM_Servo_Driver import PWM
 import RPi.GPIO as GPIO
 
 class GPIOController(object):
-    def __init__(self):
-# 		self.parent = parent
+    RED_PIN = 1
+    GREEN_PIN = 2
+    BLUE_PIN = 3
 
-        # Setup GPIO for reading light button
-        GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
-        self.BUTTON_1 = 17           # Sets our input pin
-        GPIO.setup(self.BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set our input pin to be an input, with internal pullup resistor on
+    def __init__(self):
+		# self.parent = parent
+
+        # # Setup GPIO for reading light button
+        # GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
+        # self.BUTTON_1 = 17           # Sets our input pin
+        # GPIO.setup(self.BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set our input pin to be an input, with internal pullup resistor on
 
         # Setup push-button callback
 # 		GPIO.add_event_detect(BUTTON_1, GPIO.FALLING, callback=self.parent.toggle_light_callback, bouncetime=300)
@@ -18,17 +22,12 @@ class GPIOController(object):
         self.freq = 10
         self.pwm.setPWMFreq(self.freq)
 
-        self.red_pin = 1
-        self.green_pin = 2
-        self.blue_pin = 3
-
-    def set_parent(self, parent):
-        self.parent = parent
-        # Setup push-button callback
-        GPIO.add_event_detect(self.BUTTON_1, GPIO.FALLING, callback=self.parent.toggle_light_callback, bouncetime=300)
-
+    # def set_parent(self, parent):
+    #     self.parent = parent
+    #     # Setup push-button callback
+    #     GPIO.add_event_detect(self.BUTTON_1, GPIO.FALLING, callback=self.parent.toggle_light_callback, bouncetime=300)
 
     def set_lights(self, red, green, blue):
-        self.pwm.setPWM(self.red_pin, 0 , red)
-        self.pwm.setPWM(self.green_pin, 0, green)
-        self.pwm.setPWM(self.blue_pin, 0, blue)
+        self.pwm.setPWM(self.RED_PIN, 0 , red)
+        self.pwm.setPWM(self.GREEN_PIN, 0, green)
+        self.pwm.setPWM(self.BLUE_PIN, 0, blue)

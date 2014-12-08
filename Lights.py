@@ -13,11 +13,18 @@
 # from Adafruit_PWM_Servo_Driver import PWM
 import time, datetime, math
 from threading import Thread
+import Lifx
 # import RPi.GPIO as GPIO
 
 
 class Lights(object):
+
+
     def __init__(self, gpio_controller, lifx_controller):
+        """
+        :param gpio_controller:
+        :type lifx_controller: Lifx.Lifx
+        """
         self.gpio_controller = gpio_controller
         self.gpio_controller.set_parent(self)
         self.lifx_controller = lifx_controller
@@ -173,15 +180,17 @@ class Lights(object):
         self.set_fade(fade)
 
 
-    # Callback from push-button press to toggle reading lights
-    def toggle_light_callback(self, channel):
-        self.toggle_lights()
+    # # Callback from push-button press to toggle reading lights
+    # def toggle_light_callback(self, channel):
+    #     self.toggle_lights()
 
     def toggle_lights(self):
         if self.light_state:
+            self.lifx_controller.reading_lights_off()
             self.lights_off()
             self.light_state = False
         else:
+            self.lifx_controller.reading_lights_on()
             self.lights_on()
             self.light_state = True
         print 'toggle_lights'
