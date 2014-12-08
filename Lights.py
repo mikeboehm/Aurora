@@ -167,16 +167,14 @@ class Lights(object):
         end_colour = {'red': 0, 'green': 0, 'blue': 0}
         fade = {'duration': self.reading_light_duration, 'end_colour': end_colour}
 
-        self.lifx_controller.turn_on()
-        self.lifx_controller.fade(self.lifx_controller.NIGHT, self.reading_light_duration)
+        self.lifx_controller.reading_lights_off()
 
         self.set_fade(fade)
 
     # Turns reading lights on
     def lights_on(self):
         fade = {'duration': self.reading_light_duration, 'end_colour': self.reading_light}
-
-        self.lifx_controller.fade(self.lifx_controller.READING_LIGHT, self.reading_light_duration)
+        self.lifx_controller.reading_lights_on()
         self.set_fade(fade)
 
 

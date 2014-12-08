@@ -250,20 +250,20 @@ class Aurora(object):
             next_alarm = today_alarm
 
         # Demo mode ######################
-        dawn_duration = datetime.timedelta(minutes=1)
-        sunrise_duration = datetime.timedelta(minutes=1)
-        auto_shutoff_delay = datetime.timedelta(minutes=1)
-        
-        sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
-        
-        sunrise_end = datetime.datetime.now() + sunrise_delay
-        dawn_end = sunrise_end - sunrise_duration
-        day_ends = sunrise_end + auto_shutoff_delay
-                      
-        dawn = {'end_time': dawn_end, 'duration': dawn_duration}
-        sunrise = {'end_time': sunrise_end, 'duration': sunrise_duration}       
-        day = {'end_time': day_ends}
-        return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
+#         dawn_duration = datetime.timedelta(minutes=1)
+#         sunrise_duration = datetime.timedelta(minutes=1)
+#         auto_shutoff_delay = datetime.timedelta(minutes=1)
+#         
+#         sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
+#         
+#         sunrise_end = datetime.datetime.now() + sunrise_delay
+#         dawn_end = sunrise_end - sunrise_duration
+#         day_ends = sunrise_end + auto_shutoff_delay
+#                       
+#         dawn = {'end_time': dawn_end, 'duration': dawn_duration}
+#         sunrise = {'end_time': sunrise_end, 'duration': sunrise_duration}       
+#         day = {'end_time': day_ends}
+#         return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
 
         # END DEMO MODE ##################
 
