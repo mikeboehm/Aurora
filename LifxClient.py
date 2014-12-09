@@ -11,34 +11,6 @@ class LifxClient(object):
     ENDPOINT_LIGHTS_OFF = '/lights/all/off'
     ENDPOINT_SET_LIGHTS = '/lights/all/color'
 
-    DAWN = {
-        'hue': 0,
-        'saturation': 1,
-        'brightness': 1,
-        'kelvin': 2500
-    }
-
-    DAY = {
-        'hue': 0,
-        'saturation': 0,
-        'brightness': 1,
-        'kelvin': 2500
-    }
-
-    NIGHT = {
-        'hue': 29,
-        'saturation': 1,
-        'brightness': 0,
-        'kelvin': 2500
-    }
-
-    READING_LIGHT = {
-        'hue': 29,
-        'saturation': 1,
-        'brightness': 1,
-        'kelvin': 2500
-    }
-
     def __init__(self, requests):
         self.requests = requests
         pass
