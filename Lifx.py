@@ -61,7 +61,8 @@ class Lifx(object):
             'kelvin': 2500
     }
 
-    pre_fade_duration = 1
+    pre_fade_duration = 0
+    reading_light_duration = 2
 
     """
     :type lifx_client: LifxClient
@@ -84,12 +85,14 @@ class Lifx(object):
         self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)        
     
     def reading_lights_on(self):
-        self.client.fade(self.READING_LIGHT, self.pre_fade_duration)
-        response = self.client.turn_on()
+        self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)
+        self.client.turn_on()
+        response = self.client.fade(self.READING_LIGHT, self.reading_light_duration)        
         if response:
             return True
 
     def reading_lights_off(self):
+        self.client.fade(self.PRE_READING_LIGHT, self.reading_light_duration)
         response = self.client.turn_off()
         if response:
             return True

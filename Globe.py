@@ -9,7 +9,6 @@ class Globe(object):
         self.set_light_on_state(light_response['on'])
 
     def set_color(self, color):
-        print color
         self.color = color
 
     def get_color(self):

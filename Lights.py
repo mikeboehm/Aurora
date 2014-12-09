@@ -54,7 +54,7 @@ class Lights(object):
         end_time = datetime.datetime.now()
         self.fade_end_time = end_time
 
-        self.fade_diffs_dict = self.fade_diffs(black, black)
+        self.fade_diffs_dict = self.fade_diffs(self.black, self.black)
         self.fade_total_duration = datetime.timedelta(seconds=0)
 
         # Create fade loops so we can test if they're running and also kill them
@@ -172,11 +172,9 @@ class Lights(object):
 
     def toggle_lights(self):
         if self.light_state:
-            self.lifx_controller.reading_lights_off()
             self.lights_off()
             self.light_state = False
         else:
-            self.lifx_controller.reading_lights_on()
             self.lights_on()
             self.light_state = True
         print 'toggle_lights'
