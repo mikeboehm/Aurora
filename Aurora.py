@@ -20,7 +20,7 @@ class Aurora(object):
     """
     lights = ''
 
-    def __init__(self, lights, settings, lifx_controller):
+    def __init__(self, lights, settings, lifx_controller, gpio_controller):
 
         """
         :type lights: Lights.Lights
@@ -43,16 +43,10 @@ class Aurora(object):
         self.rabbit_listener_thread = threading.Thread(target=self.rabbit_listner)
         self.rabbit_listener_thread.start()
 
-        # Setup GPIO for reading light button
-        GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
-        self.BUTTON_1 = 17           # Sets our input pin
-        # Set our input pin to be an input, with internal pullup resistor on
-        GPIO.setup(self.BUTTON_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        # Setup push-button callback
-        GPIO.add_event_detect(self.BUTTON_1, GPIO.FALLING, callback=self.toggle_light_callback, bouncetime=300)
+        gpio_controller.set_parent(self, 'toggle_light_callback')
 
     # Callback from push-button press to toggle reading lights
-    def toggle_light_callback(self, channel):
+    def toggle_light_callback(self):
         self.lights.toggle_lights()
 
     def log(self, message):

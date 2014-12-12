@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from Aurora import Aurora
+from ButtonController import ButtonController
 from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
@@ -21,6 +22,8 @@ def print_next_alarm(aurora):
 # 	print '&' * 30
 
 log_name = 'Aurora'
+BUTTON_PIN = 17
+
 
 if __name__ == '__main__':
     try:
@@ -35,7 +38,9 @@ if __name__ == '__main__':
         jsonClient = JsonClient()
         settings = Settings(jsonClient)
 
-        aurora = Aurora(lights, settings, lifx)
+        button_controller = ButtonController(BUTTON_PIN)
+
+        aurora = Aurora(lights, settings, lifx, button_controller)
 
         aurora.set_alarm()
         while aurora.keep_running == True:
