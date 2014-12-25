@@ -3,7 +3,8 @@ import datetime
 from Globe import Globe
 class LifxClient(object):
     # BASE_URL = 'http://lifx-http.local:56780'
-    BASE_URL = 'http://localhost:56780'
+#     BASE_URL = 'http://localhost:56780'
+    BASE_URL = 'http://127.0.0.1:56780'
     # BASE_URL = 'http://aurora.local:56780'
     ENDPOINT_GET_LIGHTS = '/lights.json'
     ENDPOINT_TOGGLE = '/lights/all/toggle'

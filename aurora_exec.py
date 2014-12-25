@@ -5,7 +5,7 @@ from ButtonController import ButtonController
 from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
-from PwmDriver import PwmDriver
+# from PwmDriver import PwmDriver
 from LifxClient import LifxClient
 from Lifx import Lifx
 import time
@@ -32,8 +32,8 @@ if __name__ == '__main__':
         lifx = Lifx(lifx_client)
 
 
-        pwm_driver = PwmDriver()
-        lights = Lights(pwm_driver, lifx)
+#         pwm_driver = PwmDriver()
+        lights = Lights(lifx)
 
         jsonClient = JsonClient()
         settings = Settings(jsonClient)
@@ -48,5 +48,6 @@ if __name__ == '__main__':
             time.sleep(10)
 
     except KeyboardInterrupt:
-        aurora.shutdown()
         print '#' * 10 + ' Exiting ' + '#' * 10
+        aurora.shutdown()
+        

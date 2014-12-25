@@ -19,10 +19,16 @@ class Aurora(object):
     :type lights: Lights.Lights
     """
     lights = ''
+    light_callback_method = 'toggle_light_callback'
+
 
     def __init__(self, lights, settings, lifx_controller, gpio_controller):
 
         """
+
+        :param lights:
+        :param lifx_controller:
+        :param gpio_controller:
         :type lights: Lights.Lights
         :param settings:
         :type lifx_controller: Lifx.Lifx
@@ -43,7 +49,7 @@ class Aurora(object):
         self.rabbit_listener_thread = threading.Thread(target=self.rabbit_listner)
         self.rabbit_listener_thread.start()
 
-        gpio_controller.set_parent(self, 'toggle_light_callback')
+        gpio_controller.set_parent(self, self.light_callback_method)
 
     # Callback from push-button press to toggle reading lights
     def toggle_light_callback(self):

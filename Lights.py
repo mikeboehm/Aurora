@@ -20,12 +20,11 @@ class Lights(object):
     black = {'red': 0, 'green': 0, 'blue': 0}
     fade_end_colour = black
 
-    def __init__(self, pwm_driver, lifx_controller):
+    def __init__(self, lifx_controller):
         """
-        :param pwm_driver:
         :type lifx_controller: Lifx.Lifx
         """
-        self.pwm_driver = pwm_driver
+#         self.pwm_driver = pwm_driver
         self.lifx_controller = lifx_controller
 
         pins = {
@@ -108,7 +107,7 @@ class Lights(object):
         green = int(colour['green'])
         blue = int(colour['blue'])
 
-        self.pwm_driver.set_lights(red, green, blue)
+#         self.pwm_driver.set_lights(red, green, blue)
 
         self.current_colour = {'red': red, 'green': green, 'blue': blue}
 
