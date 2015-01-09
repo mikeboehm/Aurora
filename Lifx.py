@@ -1,4 +1,5 @@
 __author__ = 'mike'
+from threading import Thread
 
 from LifxClient import LifxClient
 
@@ -54,21 +55,22 @@ class Lifx(object):
     }
 
     current_color = {
-            'hue': 0,
-            'saturation': 1,
-            'brightness': 0.25,
-            'kelvin': 2500
+        'hue': 0,
+        'saturation': 1,
+        'brightness': 0.25,
+        'kelvin': 2500
     }
 
     pre_fade_duration = 0
     reading_light_duration = 2
+    client_thread = ''
 
     """
     :type lifx_client: LifxClient
     """
     def __init__(self, lifx_client):
-
         self.client = lifx_client
+        self.client_thread = Thread()
 
     def dawn(self, dawn_duration):
         self.client.fade(self.PRE_DAWN, self.pre_fade_duration)
@@ -86,17 +88,13 @@ class Lifx(object):
     def reading_lights_on(self):
         self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)
         self.client.turn_on()
-        response = self.client.fade(self.READING_LIGHT, self.reading_light_duration)        
-        if response:
-            return True
+        self.client.fade(self.READING_LIGHT, self.reading_light_duration)
 
     def reading_lights_off(self):
         self.client.fade(self.PRE_READING_LIGHT, self.reading_light_duration)
-        response = self.client.turn_off()
-        if response:
-            return True
+        self.client.turn_off()
 
     def reading_lights_toggle(self):
-        response = self.client.toggle()
-        if response:
-            return True
+        self.client_thread = Thread(target=self.client.toggle)
+        # self.client.toggle()
+        self.client_thread.start()
