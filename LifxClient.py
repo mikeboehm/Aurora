@@ -1,9 +1,11 @@
 import json
 import datetime
 from Globe import Globe
+
+
 class LifxClient(object):
     # BASE_URL = 'http://lifx-http.local:56780'
-#     BASE_URL = 'http://localhost:56780'
+    # BASE_URL = 'http://localhost:56780'
     BASE_URL = 'http://127.0.0.1:56780'
     # BASE_URL = 'http://aurora.local:56780'
     ENDPOINT_GET_LIGHTS = '/lights.json'
@@ -14,7 +16,6 @@ class LifxClient(object):
 
     def __init__(self, requests):
         self.requests = requests
-        pass
 
     def do_put(self, url, payload=None):
         try:
@@ -41,7 +42,6 @@ class LifxClient(object):
     def toggle(self):
         url = self.url_builder(self.ENDPOINT_TOGGLE)
         return self.do_put(url)
-
 
     def turn_on(self):
         url = self.url_builder(self.ENDPOINT_LIGHTS_ON)
@@ -75,6 +75,7 @@ class LifxClient(object):
     def url_builder(self, endpoint):
         return self.BASE_URL + endpoint
 
+    @staticmethod
     def get_duration_in_seconds(self, duration):
         if isinstance(duration, datetime.timedelta):
             duration_in_seconds = duration.total_seconds()

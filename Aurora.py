@@ -46,7 +46,7 @@ class Aurora(object):
         self.sunrise_timer = threading.Timer(1, self.trigger_sunrise)
         self.shutoff_thread = threading.Timer(1, self.trigger_autoshutoff)
 
-        self.rabbit_listener_thread = threading.Thread(target=self.rabbit_listner)
+        self.rabbit_listener_thread = threading.Thread(target=self.rabbit_listener)
         self.rabbit_listener_thread.start()
 
         gpio_controller.set_parent(self, self.light_callback_method)
@@ -61,7 +61,7 @@ class Aurora(object):
         # Record a message
         syslog.syslog(syslog.LOG_ALERT, message)
 
-    def rabbit_listner(self):
+    def rabbit_listener(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             host='localhost'))
         channel = connection.channel()
@@ -69,9 +69,11 @@ class Aurora(object):
 
         print ' [*] Waiting for messages. To exit press CTRL+C'
 
-        channel.basic_consume(self.rabbit_callback,
+        channel.basic_consume(
+            self.rabbit_callback,
             queue='aurora',
-            no_ack=True)
+            no_ack=True
+        )
 
         channel.start_consuming()
 
@@ -102,7 +104,7 @@ class Aurora(object):
 #       self.threads['dawn'] = dawn
         self.next_alarm = next_alarm
 
-    # Setup dawn tranistion
+    # Setup dawn transition
     # Create a thread for sunrise
     def trigger_dawn(self):
         print 'trigger_dawn'
@@ -122,7 +124,7 @@ class Aurora(object):
         self.sunrise_timer = threading.Timer(seconds_to_sunrise, self.trigger_sunrise)
         self.sunrise_timer.start()
 
-    # Setup sunrise tranistion
+    # Setup sunrise transition
     # Create a thread for day
     def trigger_sunrise(self):
         print 'trigger_sunrise'
@@ -217,13 +219,12 @@ class Aurora(object):
 
         return today_alarm
 
-
     # Gets next alarm (typically tomorrow's)
     def get_next_alarm(self):
         now = datetime.datetime.now()
         today_alarm = self.get_today_alarm()
 
-        if (now >= today_alarm['sunrise']['end_time']):
+        if now >= today_alarm['sunrise']['end_time']:
             print "now >= today_alarm['sunrise']['end_time'])"
             day_number = int(now.strftime("%w"))
             next_alarm = self.get_alarm_for_day_number(day_number + 1)

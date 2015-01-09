@@ -18,7 +18,6 @@ class Lifx(object):
         'kelvin': 2500
     }
 
-
     PRE_DAY = {
         'hue': 0,
         'saturation': 0,
