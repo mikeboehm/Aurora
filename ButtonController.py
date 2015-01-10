@@ -19,8 +19,8 @@ class ButtonController(object):
         GPIO.setup(self.BUTTON_2, GPIO.IN, pull_up_down=GPIO.PUD_OFF)
 
         # Setup push-button callback
-        GPIO.add_event_detect(self.BUTTON_1, GPIO.RISING, callback=self.callback_method, bouncetime=1000)
-        GPIO.add_event_detect(self.BUTTON_2, GPIO.RISING, callback=self.callback_method, bouncetime=1000)
+        GPIO.add_event_detect(self.BUTTON_1, GPIO.RISING, callback=self.callback_method, bouncetime=300)
+        GPIO.add_event_detect(self.BUTTON_2, GPIO.RISING, callback=self.callback_method, bouncetime=300)
 
     def callback_method(self, channel):
         if self.parent and self.parent_callback:

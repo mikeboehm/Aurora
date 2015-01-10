@@ -170,13 +170,19 @@ class Lights(object):
     #     self.toggle_lights()
 
     def toggle_lights(self):
-        if self.light_state:
-            self.lights_off()
-            self.light_state = False
-        else:
-            self.lights_on()
-            self.light_state = True
+        start_time = time.time()
+        print 'start:', start_time
+        self.lifx_controller.reading_lights_toggle()
+#         if self.light_state:
+#             self.lights_off()
+#             self.light_state = False
+#         else:
+#             self.lights_on()
+#             self.light_state = True
         print 'toggle_lights'
+        print 'end: ', time.time()
+#         duration = time.time() - start_time
+#         print 'duration: ',duration 
 
     def shutdown(self):
         pass

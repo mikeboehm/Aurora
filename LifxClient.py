@@ -76,10 +76,11 @@ class LifxClient(object):
         return self.BASE_URL + endpoint
 
     @staticmethod
-    def get_duration_in_seconds(self, duration):
+    def get_duration_in_seconds(duration):
         if isinstance(duration, datetime.timedelta):
             duration_in_seconds = duration.total_seconds()
         else:
             duration_in_seconds = duration
 
         return duration_in_seconds
+        

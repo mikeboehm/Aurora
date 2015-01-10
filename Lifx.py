@@ -98,3 +98,4 @@ class Lifx(object):
         self.client_thread = Thread(target=self.client.toggle)
         # self.client.toggle()
         self.client_thread.start()
+        
