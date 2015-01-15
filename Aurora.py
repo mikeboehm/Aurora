@@ -195,7 +195,7 @@ class Aurora(object):
 
         dawn_duration = datetime.timedelta(minutes=15)
         sunrise_duration = datetime.timedelta(minutes=15)
-        auto_shutoff_delay = datetime.timedelta(minutes=60)
+        auto_shutoff_delay = datetime.timedelta(hours=2)
 
         year = alarm_day.strftime("%Y")
         month = alarm_day.strftime("%m")
