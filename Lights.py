@@ -164,25 +164,9 @@ class Lights(object):
         self.lifx_controller.reading_lights_on()
         self.set_fade(fade)
 
-
-    # # Callback from push-button press to toggle reading lights
-    # def toggle_light_callback(self, channel):
-    #     self.toggle_lights()
-
     def toggle_lights(self):
-        start_time = time.time()
-        print 'start:', start_time
+        print 'Toggle lights'
         self.lifx_controller.reading_lights_toggle()
-#         if self.light_state:
-#             self.lights_off()
-#             self.light_state = False
-#         else:
-#             self.lights_on()
-#             self.light_state = True
-        print 'toggle_lights'
-        print 'end: ', time.time()
-#         duration = time.time() - start_time
-#         print 'duration: ',duration 
 
     def shutdown(self):
         pass
