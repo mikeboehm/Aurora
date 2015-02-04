@@ -30,7 +30,7 @@ class Lifx(object):
         'hue': 0,
         'saturation': 0,
         'brightness': 1,
-        'kelvin': 2500
+        'kelvin': 9000
     }
 
     NIGHT = {
