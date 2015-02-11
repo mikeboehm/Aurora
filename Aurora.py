@@ -1,10 +1,15 @@
 #!/usr/bin/python
 
-import datetime, threading, time, syslog
+import datetime
+import threading
+import syslog
+
 import pika
+
 import Lifx
 import Lights
-import RPi.GPIO as GPIO
+
+# import RPi.GPIO as GPIO
 
 # Glossary
 # Dawn      is the first appearance of light in the sky before sunrise. The start of the first sequence (black to red)
@@ -21,11 +26,9 @@ class Aurora(object):
     lights = ''
     light_callback_method = 'toggle_light_callback'
 
-
     def __init__(self, lights, settings, lifx_controller, gpio_controller):
 
         """
-
         :param lights:
         :param lifx_controller:
         :param gpio_controller:
@@ -101,7 +104,7 @@ class Aurora(object):
 
         self.dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
         self.dawn_timer.start()
-#       self.threads['dawn'] = dawn
+        # self.threads['dawn'] = dawn
         self.next_alarm = next_alarm
 
     # Setup dawn transition
@@ -148,18 +151,17 @@ class Aurora(object):
     def trigger_autoshutoff(self):
         print 'turning lights off'
         end_colour = {'red': 0, 'green': 0, 'blue': 0}
-        duration = datetime.timedelta(seconds = 2)
+        duration = datetime.timedelta(seconds=2)
         fade = {'end_colour': end_colour, 'duration': duration}
         self.lights.set_fade(fade)
 
         self.lifx_controller.shutoff(duration)
 
         # Set tomorrow's alarm
-        # @todo implement
-        self.set_alarm() # Dawn triggers again, but it adds more and more delay each time
+        self.set_alarm()
 
     # Returns the number of seconds until an event
-    def seconds_till_alarm(self, end_time, start_time = False):
+    def seconds_till_alarm(self, end_time, start_time=False):
         if not start_time:
             start_time = datetime.datetime.now()
 
@@ -201,7 +203,7 @@ class Aurora(object):
         month = alarm_day.strftime("%m")
         day = alarm_day.strftime("%d")
 
-        sunrise_end = datetime.datetime(int(year),int(month),int(day), int(hour), int(minutes))
+        sunrise_end = datetime.datetime(int(year), int(month), int(day), int(hour), int(minutes))
         dawn_end = sunrise_end - sunrise_duration
         day_ends = sunrise_end + auto_shutoff_delay
 
@@ -228,7 +230,7 @@ class Aurora(object):
             print "now >= today_alarm['sunrise']['end_time'])"
             day_number = int(now.strftime("%w"))
             next_alarm = self.get_alarm_for_day_number(day_number + 1)
-        else :
+        else:
             print now, today_alarm['sunrise']['end_time']
             next_alarm = today_alarm
 
