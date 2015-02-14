@@ -9,6 +9,7 @@ import pika
 import Lifx
 import Lights
 
+
 # import RPi.GPIO as GPIO
 
 # Glossary
@@ -26,8 +27,7 @@ class Aurora(object):
     lights = ''
     light_callback_method = 'toggle_light_callback'
 
-    def __init__(self, lights, settings, lifx_controller, gpio_controller):
-
+    def __init__(self, lights, settings, lifx_controller, gpio_controller, logger):
         """
         :param lights:
         :param lifx_controller:
@@ -44,6 +44,9 @@ class Aurora(object):
 
         self.lifx_controller = lifx_controller
 
+        self.logger = logger
+        self.log('init')
+
         # Initialise alarm threads so we can test if they're running
         self.dawn_timer = threading.Timer(1, self.trigger_dawn)
         self.sunrise_timer = threading.Timer(1, self.trigger_sunrise)
@@ -56,13 +59,16 @@ class Aurora(object):
 
     # Callback from push-button press to toggle reading lights
     def toggle_light_callback(self):
+        self.log('toggle_light_callback', 'Toggle light from button press')
         self.lights.toggle_lights()
 
-    def log(self, message):
-        # Define identifier
-        syslog.openlog("Aurora")
-        # Record a message
-        syslog.syslog(syslog.LOG_ALERT, message)
+    def log(self, method_name, message=None):
+        log_line = method_name + '()'
+
+        if message:
+            log_line += ': ' + str(message)
+
+        self.logger.write(log_line, 'Aurora')
 
     def rabbit_listener(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
@@ -81,6 +87,7 @@ class Aurora(object):
         channel.start_consuming()
 
     def rabbit_callback(self, ch, method, properties, body):
+        self.log('rabbit_callback', 'Message received from web app: "' + body + '"')
         print " [x] Received %r" % (body,)
         self.log(body)
         self.lights.toggle_lights()
@@ -92,6 +99,7 @@ class Aurora(object):
 
     # Creates a Timer thread for the next alarm
     def set_alarm(self):
+        self.log('set_alarm')
         # Get next alarm
         next_alarm = self.get_next_alarm()
         print 'Sunrise:', next_alarm['sunrise']['end_time']
@@ -110,6 +118,7 @@ class Aurora(object):
     # Setup dawn transition
     # Create a thread for sunrise
     def trigger_dawn(self):
+        self.log('trigger_dawn')
         print 'trigger_dawn'
         # Fade
         # @todo Put colour into config file
@@ -130,6 +139,7 @@ class Aurora(object):
     # Setup sunrise transition
     # Create a thread for day
     def trigger_sunrise(self):
+        self.log('trigger_sunrise')
         print 'trigger_sunrise'
 
         # @todo Put colour into config file
@@ -149,6 +159,7 @@ class Aurora(object):
 
     # Execute day routine (shut lights off)
     def trigger_autoshutoff(self):
+        self.log('trigger_autoshutoff')
         print 'turning lights off'
         end_colour = {'red': 0, 'green': 0, 'blue': 0}
         duration = datetime.timedelta(seconds=2)
@@ -162,6 +173,7 @@ class Aurora(object):
 
     # Returns the number of seconds until an event
     def seconds_till_alarm(self, end_time, start_time=False):
+        self.log('seconds_till_alarm', end_time)
         if not start_time:
             start_time = datetime.datetime.now()
 
@@ -177,6 +189,7 @@ class Aurora(object):
     # 5 Friday
     # 6 Saturday
     def get_alarm_for_day_number(self, day_number):
+        self.log('get_alarm_for_day_number', day_number)
         day_number = int(day_number)
         if day_number > 6:
             day_number = 0
@@ -214,6 +227,7 @@ class Aurora(object):
         return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
 
     def get_today_alarm(self):
+        self.log('get_today_alarm')
         now = datetime.datetime.now()
         day_number = now.strftime("%w")
 
@@ -227,28 +241,30 @@ class Aurora(object):
         today_alarm = self.get_today_alarm()
 
         if now >= today_alarm['sunrise']['end_time']:
+            self.log('get_next_alarm', 'get tomorrow')
             print "now >= today_alarm['sunrise']['end_time'])"
             day_number = int(now.strftime("%w"))
             next_alarm = self.get_alarm_for_day_number(day_number + 1)
         else:
+            self.log('get_next_alarm', 'get today alarm')
             print now, today_alarm['sunrise']['end_time']
             next_alarm = today_alarm
 
-        # Demo mode ######################
-#         dawn_duration = datetime.timedelta(minutes=1)
-#         sunrise_duration = datetime.timedelta(minutes=1)
-#         auto_shutoff_delay = datetime.timedelta(minutes=1)
-#         
-#         sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
-#         
-#         sunrise_end = datetime.datetime.now() + sunrise_delay
-#         dawn_end = sunrise_end - sunrise_duration
-#         day_ends = sunrise_end + auto_shutoff_delay
-#                       
-#         dawn = {'end_time': dawn_end, 'duration': dawn_duration}
-#         sunrise = {'end_time': sunrise_end, 'duration': sunrise_duration}       
-#         day = {'end_time': day_ends}
-#         return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
+            # Demo mode ######################
+            # dawn_duration = datetime.timedelta(minutes=1)
+            # sunrise_duration = datetime.timedelta(minutes=1)
+            # auto_shutoff_delay = datetime.timedelta(minutes=1)
+            #
+            # sunrise_delay = dawn_duration + sunrise_duration + datetime.timedelta(seconds=5)
+            #
+            # sunrise_end = datetime.datetime.now() + sunrise_delay
+            # dawn_end = sunrise_end - sunrise_duration
+            # day_ends = sunrise_end + auto_shutoff_delay
+            #
+            # dawn = {'end_time': dawn_end, 'duration': dawn_duration}
+            # sunrise = {'end_time': sunrise_end, 'duration': sunrise_duration}
+            # day = {'end_time': day_ends}
+            # return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
 
         # END DEMO MODE ##################
 
@@ -262,4 +278,4 @@ class Aurora(object):
         self.sunrise_timer.cancel()
         self.shutoff_thread.cancel()
         self.rabbit_listener_thread.join()
-#       self.lights.shutdown()
+        # self.lights.shutdown()

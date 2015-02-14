@@ -8,6 +8,7 @@ from JsonClient import JsonClient
 # from PwmDriver import PwmDriver
 from LifxClient import LifxClient
 from Lifx import Lifx
+from basic_logger import Logger
 import time
 import os
 import requests
@@ -27,6 +28,8 @@ BUTTON_PIN = 17
 
 if __name__ == '__main__':
     try:
+        logger = Logger()
+
         request = requests
         lifx_client = LifxClient(request)
         lifx = Lifx(lifx_client)
@@ -40,7 +43,13 @@ if __name__ == '__main__':
 
         button_controller = ButtonController(BUTTON_PIN)
 
-        aurora = Aurora(lights, settings, lifx, button_controller)
+        aurora = Aurora(
+            lights,
+            settings,
+            lifx,
+            button_controller,
+            logger
+        )
 
         aurora.set_alarm()
         while aurora.keep_running == True:
@@ -50,4 +59,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print '#' * 10 + ' Exiting ' + '#' * 10
         aurora.shutdown()
-        
+
