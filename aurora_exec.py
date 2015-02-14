@@ -2,6 +2,7 @@
 
 from Aurora import Aurora
 from ButtonController import ButtonController
+from MockButtonController import MockButtonController
 from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
@@ -42,6 +43,7 @@ if __name__ == '__main__':
         settings = Settings(jsonClient)
 
         button_controller = ButtonController(BUTTON_PIN)
+        # mock_button_controller = MockButtonController()
 
         aurora = Aurora(
             lights,
