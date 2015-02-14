@@ -21,6 +21,8 @@ import Lights
 
 
 class Aurora(object):
+    SHUTOFF_DURATION = None
+
     """
     :type lights: Lights.Lights
     """
@@ -29,14 +31,12 @@ class Aurora(object):
 
     logger = None
 
-    def __init__(self, lights, settings, lifx_controller, gpio_controller, logger):
+    def __init__(self, lights, settings, gpio_controller, logger):
         """
         :param lights:
-        :param lifx_controller:
         :param gpio_controller:
         :type lights: Lights.Lights
         :param settings:
-        :type lifx_controller: Lifx.Lifx
         :return:
         """
         self.lights = lights
@@ -44,10 +44,10 @@ class Aurora(object):
         self.next_alarm = False
         self.keep_running = True
 
-        self.lifx_controller = lifx_controller
-
         self.logger = logger
-        self.log('init')
+        self._log('init')
+
+        self.SHUTOFF_DURATION = datetime.timedelta(seconds=2)
 
         # Initialise alarm threads so we can test if they're running
         self.dawn_timer = threading.Timer(1, self.trigger_dawn)
@@ -61,16 +61,8 @@ class Aurora(object):
 
     # Callback from push-button press to toggle reading lights
     def toggle_light_callback(self):
-        self.log('toggle_light_callback', 'Toggle light from button press')
+        self._log('toggle_light_callback', 'Toggle light from button press')
         self.lights.toggle_lights()
-
-    def log(self, method_name, message=None):
-        log_line = method_name + '()'
-
-        if message:
-            log_line += ': ' + str(message)
-
-        self.logger.write(log_line, 'Aurora')
 
     def rabbit_listener(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
@@ -89,9 +81,9 @@ class Aurora(object):
         channel.start_consuming()
 
     def rabbit_callback(self, ch, method, properties, body):
-        self.log('rabbit_callback', 'Message received from web app: "' + body + '"')
+        self._log('rabbit_callback', 'Message received from web app: "' + body + '"')
         print " [x] Received %r" % (body,)
-        self.log(body)
+        self._log(body)
         self.lights.toggle_lights()
 
     # Returns settings from config
@@ -101,16 +93,16 @@ class Aurora(object):
 
     # Creates a Timer thread for the next alarm
     def set_alarm(self):
-        self.log('set_alarm')
+        self._log('set_alarm')
         # Get next alarm
         next_alarm = self.get_next_alarm()
         print 'Sunrise:', next_alarm['sunrise']['end_time']
-        self.log('Sunrise:' + str(next_alarm['sunrise']['end_time']))
+        self._log('Sunrise:' + str(next_alarm['sunrise']['end_time']))
 
         dawn = next_alarm['dawn']['end_time'] - next_alarm['dawn']['duration']
         seconds_to_alarm = self.seconds_till_alarm(dawn)
         print 'Seconds till dawn: ', seconds_to_alarm
-        self.log('Seconds till dawn: ' + str(seconds_to_alarm))
+        self._log('Seconds till dawn: ' + str(seconds_to_alarm))
 
         self.dawn_timer = threading.Timer(seconds_to_alarm, self.trigger_dawn)
         self.dawn_timer.start()
@@ -120,17 +112,11 @@ class Aurora(object):
     # Setup dawn transition
     # Create a thread for sunrise
     def trigger_dawn(self):
-        self.log('trigger_dawn')
+        self._log('trigger_dawn')
         print 'trigger_dawn'
-        # Fade
-        # @todo Put colour into config file
-        end_colour = {'red': 4095, 'green': 0, 'blue': 0}
 
         duration = self.next_alarm['dawn']['duration']
-        fade = {'end_colour': end_colour, 'duration': duration}
-
-        self.lights.set_fade(fade)
-        self.lifx_controller.dawn(duration)
+        self.lights.dawn(duration)
 
         sunrise = self.next_alarm['sunrise']['end_time'] - self.next_alarm['sunrise']['duration']
         seconds_to_sunrise = self.seconds_till_alarm(sunrise)
@@ -141,16 +127,12 @@ class Aurora(object):
     # Setup sunrise transition
     # Create a thread for day
     def trigger_sunrise(self):
-        self.log('trigger_sunrise')
+        self._log('trigger_sunrise')
         print 'trigger_sunrise'
 
-        # @todo Put colour into config file
-        end_colour = {'red': 4095, 'green': 4095, 'blue': 4095}
         duration = self.next_alarm['sunrise']['duration']
-        fade = {'end_colour': end_colour, 'duration': duration}
 
-        self.lights.set_fade(fade)
-        self.lifx_controller.sunrise(duration)
+        self.lights.sunrise(duration)
 
         # Setup auto-shutoff
         day_ends = self.next_alarm['day']['end_time']
@@ -161,21 +143,17 @@ class Aurora(object):
 
     # Execute day routine (shut lights off)
     def trigger_autoshutoff(self):
-        self.log('trigger_autoshutoff')
+        self._log('trigger_autoshutoff')
         print 'turning lights off'
-        end_colour = {'red': 0, 'green': 0, 'blue': 0}
-        duration = datetime.timedelta(seconds=2)
-        fade = {'end_colour': end_colour, 'duration': duration}
-        self.lights.set_fade(fade)
 
-        self.lifx_controller.shutoff(duration)
+        self.lights.shutoff(self.SHUTOFF_DURATION)
 
         # Set tomorrow's alarm
         self.set_alarm()
 
     # Returns the number of seconds until an event
     def seconds_till_alarm(self, end_time, start_time=False):
-        self.log('seconds_till_alarm', end_time)
+        self._log('seconds_till_alarm', end_time)
         if not start_time:
             start_time = datetime.datetime.now()
 
@@ -191,7 +169,7 @@ class Aurora(object):
     # 5 Friday
     # 6 Saturday
     def get_alarm_for_day_number(self, day_number):
-        self.log('get_alarm_for_day_number', day_number)
+        self._log('get_alarm_for_day_number', day_number)
         day_number = int(day_number)
         if day_number > 6:
             day_number = 0
@@ -229,7 +207,7 @@ class Aurora(object):
         return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
 
     def get_today_alarm(self):
-        self.log('get_today_alarm')
+        self._log('get_today_alarm')
         now = datetime.datetime.now()
         day_number = now.strftime("%w")
 
@@ -243,12 +221,12 @@ class Aurora(object):
         today_alarm = self.get_today_alarm()
 
         if now >= today_alarm['sunrise']['end_time']:
-            self.log('get_next_alarm', 'get tomorrow')
+            self._log('get_next_alarm', 'get tomorrow')
             print "now >= today_alarm['sunrise']['end_time'])"
             day_number = int(now.strftime("%w"))
             next_alarm = self.get_alarm_for_day_number(day_number + 1)
         else:
-            self.log('get_next_alarm', 'get today alarm')
+            self._log('get_next_alarm', 'get today alarm')
             print now, today_alarm['sunrise']['end_time']
             next_alarm = today_alarm
 
@@ -281,3 +259,11 @@ class Aurora(object):
         self.shutoff_thread.cancel()
         self.rabbit_listener_thread.join()
         # self.lights.shutdown()
+
+    def _log(self, method_name, message=None):
+        log_line = method_name + '()'
+
+        if message:
+            log_line += ': ' + str(message)
+
+        self.logger.write(log_line, 'Aurora')
