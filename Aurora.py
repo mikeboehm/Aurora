@@ -27,6 +27,8 @@ class Aurora(object):
     lights = ''
     light_callback_method = 'toggle_light_callback'
 
+    logger = None
+
     def __init__(self, lights, settings, lifx_controller, gpio_controller, logger):
         """
         :param lights:

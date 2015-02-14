@@ -14,10 +14,16 @@ class LifxClient(object):
     ENDPOINT_LIGHTS_OFF = '/lights/all/off'
     ENDPOINT_SET_LIGHTS = '/lights/all/color'
 
-    def __init__(self, requests):
+    logger = None
+
+    def __init__(self, requests, logger):
         self.requests = requests
 
+        self.logger = logger
+        self.log('init')
+
     def do_put(self, url, payload=None):
+        self.log('do_put')
         try:
             response = self.requests.put(url, payload)
             return self.convert_response(response.text)
@@ -29,6 +35,7 @@ class LifxClient(object):
         return False
 
     def do_get(self, url):
+        self.log('do_get')
         try:
             response = self.requests.get(url)
             # print response.text
@@ -40,18 +47,22 @@ class LifxClient(object):
             return False
 
     def toggle(self):
+        self.log('toggle')
         url = self.url_builder(self.ENDPOINT_TOGGLE)
         return self.do_put(url)
 
     def turn_on(self):
+        self.log('turn_on')
         url = self.url_builder(self.ENDPOINT_LIGHTS_ON)
         return self.do_put(url)
 
     def turn_off(self):
+        self.log('turn_off')
         url = self.url_builder(self.ENDPOINT_LIGHTS_OFF)
         return self.do_put(url)
 
     def fade(self, color, duration):
+        self.log('fade')
         url = self.url_builder(self.ENDPOINT_SET_LIGHTS)
 
         color['duration'] = self.get_duration_in_seconds(duration)
@@ -59,11 +70,13 @@ class LifxClient(object):
         return self.do_put(url, color)
 
     def get_lights(self):
+        self.log('get_lights')
         url = self.url_builder(self.ENDPOINT_GET_LIGHTS)
         return self.do_get(url)
 
-    @staticmethod
-    def convert_response(response):
+    # @staticmethod
+    def convert_response(self, response):
+        self.log('convert_response')
         lights_dict_array = json.loads(response)
         lights = []
         for light_dict in lights_dict_array:
@@ -75,12 +88,20 @@ class LifxClient(object):
     def url_builder(self, endpoint):
         return self.BASE_URL + endpoint
 
-    @staticmethod
-    def get_duration_in_seconds(duration):
+    # @staticmethod
+    def get_duration_in_seconds(self, duration):
+        self.log('get_duration_in_seconds')
         if isinstance(duration, datetime.timedelta):
             duration_in_seconds = duration.total_seconds()
         else:
             duration_in_seconds = duration
 
         return duration_in_seconds
-        
+
+    def log(self, method_name, message=None):
+        log_line = method_name + '()'
+
+        if message:
+            log_line += ': ' + str(message)
+
+        self.logger.write(log_line, 'LifxClient')

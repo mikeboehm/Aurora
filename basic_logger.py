@@ -2,10 +2,10 @@ from datetime import datetime
 
 
 class Logger(object):
-    log_filename = 'everything.log'
+    log_filename = 'all_events.log'
 
     def write(self, log_record, class_name=None):
-        fp = open(self.log_filename, 'a')
+        all_events = open(self.log_filename, 'a')
         now = datetime.now()
 
         if class_name:
@@ -15,6 +15,6 @@ class Logger(object):
 
         line_to_write = formatted_date + ' - ' + log_record + "\n"
 
-        fp.write(line_to_write)
+        all_events.write(line_to_write)
 
-        fp.close()
+        all_events.close()

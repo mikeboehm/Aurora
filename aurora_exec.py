@@ -32,12 +32,12 @@ if __name__ == '__main__':
         logger = Logger()
 
         request = requests
-        lifx_client = LifxClient(request)
-        lifx = Lifx(lifx_client)
+        lifx_client = LifxClient(request, logger)
+        lifx = Lifx(lifx_client, logger)
 
 
 #         pwm_driver = PwmDriver()
-        lights = Lights(lifx)
+        lights = Lights(lifx, logger)
 
         jsonClient = JsonClient()
         settings = Settings(jsonClient)

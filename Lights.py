@@ -20,12 +20,17 @@ class Lights(object):
     black = {'red': 0, 'green': 0, 'blue': 0}
     fade_end_colour = black
 
-    def __init__(self, lifx_controller):
+    logger = None
+
+    def __init__(self, lifx_controller, logger):
         """
         :type lifx_controller: Lifx.Lifx
         """
 #         self.pwm_driver = pwm_driver
         self.lifx_controller = lifx_controller
+
+        self.logger = logger
+        self.log('init')
 
         pins = {
             'red_pin' : 1,
@@ -61,6 +66,7 @@ class Lights(object):
 
     # Set threaded fade
     def set_fade(self, fade):
+        self.log('set_fade')
         duration = fade['duration']
         end_colour = fade['end_colour']
 
@@ -82,10 +88,12 @@ class Lights(object):
 
     # Returns the values that set_fade sets
     def get_fade(self):
+        self.log('get_fade')
         return {'fade_end_time': self.fade_end_time, 'fade_total_duration': self.fade_total_duration, 'fade_diffs_dict': self.fade_diffs_dict, 'fade_end_colour': self.fade_end_colour}
 
 
     def fader(self):
+        self.log('fader')
         # While now is <= fade end
             # Fade
         while datetime.datetime.now() <= self.fade_end_time:
@@ -103,6 +111,7 @@ class Lights(object):
         self.set_lights(self.fade_end_colour)
 
     def set_lights(self, colour):
+        self.log('set_lights')
         red = int(colour['red'])
         green = int(colour['green'])
         blue = int(colour['blue'])
@@ -112,10 +121,12 @@ class Lights(object):
         self.current_colour = {'red': red, 'green': green, 'blue': blue}
 
     def get_lights(self):
+        self.log('get_lights')
         return self.current_colour
 
     # Returns a dict of the difference between two colours
     def fade_diffs(self, start_colour, end_colour):
+        self.log('fade_diffs')
         diff_red = self.fade_diff(end_colour['red'], start_colour['red'])
         diff_green = self.fade_diff(end_colour['green'], start_colour['green'])
         diff_blue = self.fade_diff(end_colour['blue'], start_colour['blue'])
@@ -124,6 +135,7 @@ class Lights(object):
 
     # Calculate the difference between two tints
     def fade_diff(self, start_colour, end_colour):
+        self.log('fade_diff')
         diff = (end_colour - start_colour) / 100.00
         diff_absolute = math.fabs(diff)
 
@@ -131,6 +143,7 @@ class Lights(object):
 
     # Returns colour to be set, based on the colour diffs
     def fade_colours(self, diffs, percent_remaining, current_lights):
+        self.log('fade_colours')
         # Calculate values
         red = self.fade_colour(diffs['red'], percent_remaining, current_lights['red'])
         green = self.fade_colour(diffs['green'], percent_remaining, current_lights['green'])
@@ -140,6 +153,7 @@ class Lights(object):
 
     # Child method of fade_colours()
     def fade_colour(self, colour, percent_remaining, current_colour):
+        self.log('fade_colour')
         if colour['diff'] < 0:
             colour_to_set = (100 - percent_remaining) * colour['absolute']
         elif colour['diff'] == 0:
@@ -151,6 +165,7 @@ class Lights(object):
 
     # Turns reading lights off
     def lights_off(self):
+        self.log('lights_off')
         end_colour = {'red': 0, 'green': 0, 'blue': 0}
         fade = {'duration': self.reading_light_duration, 'end_colour': end_colour}
 
@@ -160,11 +175,13 @@ class Lights(object):
 
     # Turns reading lights on
     def lights_on(self):
+        self.log('lights_on')
         fade = {'duration': self.reading_light_duration, 'end_colour': self.reading_light}
         self.lifx_controller.reading_lights_on()
         self.set_fade(fade)
 
     def toggle_lights(self):
+        self.log('toggle_lights')
         print 'Toggle lights'
         self.lifx_controller.reading_lights_toggle()
 
@@ -172,3 +189,11 @@ class Lights(object):
         pass
 #       print 'GPIO cleanup'
 #       GPIO.cleanup()
+
+    def log(self, method_name, message=None):
+        log_line = method_name + '()'
+
+        if message:
+            log_line += ': ' + str(message)
+
+        self.logger.write(log_line, 'Lights')
