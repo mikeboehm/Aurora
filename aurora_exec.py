@@ -6,7 +6,6 @@ from MockButtonController import MockButtonController
 from Lights import Lights
 from Settings import Settings
 from JsonClient import JsonClient
-from PwmDriver import PwmDriver
 from LifxClient import LifxClient
 from Lifx import Lifx
 from basic_logger import Logger
@@ -35,8 +34,7 @@ if __name__ == '__main__':
         lifx_client = LifxClient(request, logger)
         lifx = Lifx(lifx_client, logger)
 
-        pwm_driver = PwmDriver(1, 2, 3)
-        lights = Lights(lifx, pwm_driver, logger)
+        lights = Lights(lifx, logger)
 
         jsonClient = JsonClient()
         settings = Settings(jsonClient)
