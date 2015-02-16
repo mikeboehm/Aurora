@@ -12,8 +12,13 @@ from basic_logger import Logger
 import time
 import os
 import requests
+
+location = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__))
+)
+
 os.system('clear')
-os.system('nohup /usr/local/bin/ruby /usr/local/bin/lifx-http >> /home/pi/code/Aurora/lifx-cron-log.log &');
+os.system('nohup /usr/local/bin/ruby /usr/local/bin/lifx-http >> ' + location + '/logs/lifx-http.log &');
 
 def print_next_alarm(aurora):
     time.sleep(2)

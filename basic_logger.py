@@ -1,11 +1,24 @@
 from datetime import datetime
+import os
 
 
 class Logger(object):
-    log_filename = 'logs/all_events.log'
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+
+    log_filename = '/logs/all_events.log'
+
+    def __init__(self):
+        print self.__location__
+        print self.__location__
+        print self.__location__
+        print self.__location__
 
     def write(self, log_record, class_name=None):
-        all_events = open(self.log_filename, 'a')
+        log_file = self.__location__ + self.log_filename
+
+        all_events = open(log_file, 'a')
         now = datetime.now()
 
         if class_name:
