@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 class Logger(object):
-    log_filename = 'all_events.log'
+    log_filename = 'logs/all_events.log'
 
     def write(self, log_record, class_name=None):
         all_events = open(self.log_filename, 'a')
