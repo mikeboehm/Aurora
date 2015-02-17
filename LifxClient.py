@@ -20,10 +20,10 @@ class LifxClient(object):
         self.requests = requests
 
         self.logger = logger
-        self.log('init')
+        self._log('init')
 
     def do_put(self, url, payload=None):
-        self.log('do_put')
+        self._log('do_put')
         try:
             response = self.requests.put(url, payload)
             return self.convert_response(response.text)
@@ -35,7 +35,7 @@ class LifxClient(object):
         return False
 
     def do_get(self, url):
-        self.log('do_get')
+        self._log('do_get')
         try:
             response = self.requests.get(url)
             # print response.text
@@ -47,22 +47,22 @@ class LifxClient(object):
             return False
 
     def toggle(self):
-        self.log('toggle')
+        self._log('toggle')
         url = self.url_builder(self.ENDPOINT_TOGGLE)
         return self.do_put(url)
 
     def turn_on(self):
-        self.log('turn_on')
+        self._log('turn_on')
         url = self.url_builder(self.ENDPOINT_LIGHTS_ON)
         return self.do_put(url)
 
     def turn_off(self):
-        self.log('turn_off')
+        self._log('turn_off')
         url = self.url_builder(self.ENDPOINT_LIGHTS_OFF)
         return self.do_put(url)
 
     def fade(self, color, duration):
-        self.log('fade')
+        self._log('fade')
         url = self.url_builder(self.ENDPOINT_SET_LIGHTS)
 
         color['duration'] = self.get_duration_in_seconds(duration)
@@ -70,13 +70,15 @@ class LifxClient(object):
         return self.do_put(url, color)
 
     def get_lights(self):
-        self.log('get_lights')
+        self._log('get_lights')
         url = self.url_builder(self.ENDPOINT_GET_LIGHTS)
         return self.do_get(url)
 
     # @staticmethod
     def convert_response(self, response):
-        self.log('convert_response')
+        self._log('convert_response')
+        self._log(response)
+
         lights_dict_array = json.loads(response)
         lights = []
         for light_dict in lights_dict_array:
@@ -90,7 +92,7 @@ class LifxClient(object):
 
     # @staticmethod
     def get_duration_in_seconds(self, duration):
-        self.log('get_duration_in_seconds')
+        self._log('get_duration_in_seconds')
         if isinstance(duration, datetime.timedelta):
             duration_in_seconds = duration.total_seconds()
         else:
@@ -98,7 +100,7 @@ class LifxClient(object):
 
         return duration_in_seconds
 
-    def log(self, method_name, message=None):
+    def _log(self, method_name, message=None):
         log_line = method_name + '()'
 
         if message:
