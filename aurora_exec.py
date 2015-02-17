@@ -18,18 +18,9 @@ location = os.path.realpath(
 )
 
 os.system('clear')
-os.system('nohup /usr/local/bin/ruby /usr/local/bin/lifx-http >> ' + location + '/logs/lifx-http.log &');
+os.system('sudo nohup /usr/local/bin/lifx-http >> ' + location + '/logs/lifx-http.log &')
 
-def print_next_alarm(aurora):
-    time.sleep(2)
-    next_alarm = aurora.get_next_alarm()
-# 	print '&' * 30
-# 	print 'GOT NEXT ALARM: ', next_alarm
-# 	print '&' * 30
-
-log_name = 'Aurora'
 BUTTON_PIN = 17
-
 
 if __name__ == '__main__':
     try:
