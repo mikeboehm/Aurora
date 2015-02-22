@@ -16,8 +16,11 @@ class LifxClient(object):
 
     logger = None
 
-    def __init__(self, requests, logger):
-        self.requests = requests
+    def __init__(self, request_handler, logger):
+        """
+        :type request_handler: requests
+        """
+        self.request_handler = request_handler
 
         self.logger = logger
         self._log('init')
@@ -25,8 +28,8 @@ class LifxClient(object):
     def do_put(self, url, payload=None):
         self._log('do_put')
         try:
-            response = self.requests.put(url, payload)
-            return self.convert_response(response.text)
+            response = self.request_handler.put(url, payload)
+            return self.convert_response(response)
         except Exception as e:
             print '*' * 20
             print e.message
@@ -37,9 +40,9 @@ class LifxClient(object):
     def do_get(self, url):
         self._log('do_get')
         try:
-            response = self.requests.get(url)
+            response = self.request_handler.get(url)
             # print response.text
-            return self.convert_response(response.text)
+            return self.convert_response(response)
         except Exception as e:
             print '*' * 20
             print e.message
@@ -74,12 +77,13 @@ class LifxClient(object):
         url = self.url_builder(self.ENDPOINT_GET_LIGHTS)
         return self.do_get(url)
 
-    # @staticmethod
     def convert_response(self, response):
+        response_text = response.text
         self._log('convert_response')
-        self._log(response)
+        self._log(response.status_code)
+        self._log(response_text)
 
-        lights_dict_array = json.loads(response)
+        lights_dict_array = json.loads(response_text)
         lights = []
         for light_dict in lights_dict_array:
             light = Globe(light_dict)
