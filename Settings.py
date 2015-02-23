@@ -58,7 +58,12 @@ class Settings(object):
         day_number_string = str(day_number)
 
         alarm_string = alarms[day_number_string]['time']
-        alarm = alarm_string.split(':')
+
+        return self.parse_time_string(alarm_string)
+
+    @staticmethod
+    def parse_time_string(string):
+        alarm = string.split(':')
 
         hour = int(alarm[0])
         minutes = int(alarm[1])
