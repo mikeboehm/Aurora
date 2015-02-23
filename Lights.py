@@ -47,7 +47,7 @@ class Lights(object):
         self.lifx_controller.shutoff(duration)
 
     def _log(self, method_name, message=None):
-        log_line = method_name + '()'
+        log_line = str(method_name) + '()'
 
         if message:
             log_line += ': ' + str(message)

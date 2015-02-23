@@ -81,7 +81,7 @@ class Aurora(object):
         channel.start_consuming()
 
     def rabbit_callback(self, ch, method, properties, body):
-        self._log('rabbit_callback', 'Message received from web app: "' + body + '"')
+        self._log('rabbit_callback', 'Message received from web app: "' + str(body) + '"')
         print " [x] Received %r" % (body,)
         self._log(body)
         self.lights.toggle_lights()
@@ -261,7 +261,7 @@ class Aurora(object):
         # self.lights.shutdown()
 
     def _log(self, method_name, message=None):
-        log_line = method_name + '()'
+        log_line = str(method_name) + '()'
 
         if message:
             log_line += ': ' + str(message)
