@@ -20,19 +20,19 @@ class Settings(object):
         self.settings = self.refresh_settings()
 
     def get_settings(self):
-        self.logger.log('get_settings')
+        self.logger.log('get_settings()')
         return self.settings
 
     def set_settings(self, settings):
-        self.logger.log('set_settings')
+        self.logger.log('set_settings()')
         self.settings = settings
 
     def refresh_settings(self):
-        self.logger.log('refresh_settings')
+        self.logger.log('refresh_settings()')
         settings = self.get_settings_from_json()
 
         while not settings:
-            print 'RETRY' * 20
+            print 'RETRY'
             sleep(1)
             settings = self.get_settings_from_json()
 
@@ -40,7 +40,7 @@ class Settings(object):
         return settings
 
     def get_settings_from_json(self):
-        self.logger.log('get_settings_from_json')
+        self.logger.log('get_settings_from_json()')
         try:
             settings = self.JsonClient.get(self.url)
         except IOError:
@@ -48,12 +48,12 @@ class Settings(object):
         return settings
 
     def get_alarms(self):
-        self.logger.log('get_alarms')
+        self.logger.log('get_alarms()')
         settings = self.get_settings()
         return settings['settings']['alarms']
 
     def get_alarm_for_day(self, day_number):
-        self.logger.log('get_alarm_for_day')
+        self.logger.log('get_alarm_for_day()')
         alarms = self.get_alarms()
         day_number_string = str(day_number)
 
@@ -61,8 +61,8 @@ class Settings(object):
 
         return self.parse_time_string(alarm_string)
 
-    @staticmethod
-    def parse_time_string(string):
+    def parse_time_string(self, string):
+        self.logger.log('parse_time_string()')
         alarm = string.split(':')
 
         hour = int(alarm[0])
@@ -71,7 +71,7 @@ class Settings(object):
         return {'hour': hour, 'minutes': minutes}
 
     def get_hostname(self):
-        self.logger.log('get_hostname')
+        self.logger.log('get_hostname()')
         # Generate hostname
         bonjour_address = socket.gethostname()
         # If IP address, use as is

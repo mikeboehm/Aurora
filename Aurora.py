@@ -45,7 +45,7 @@ class Aurora(object):
         self.keep_running = True
 
         self.logger = logger
-        self._log('init')
+        self._log('init()')
 
         self.SHUTOFF_DURATION = datetime.timedelta(seconds=2)
 
@@ -61,10 +61,11 @@ class Aurora(object):
 
     # Callback from push-button press to toggle reading lights
     def toggle_light_callback(self):
-        self._log('toggle_light_callback', 'Toggle light from button press')
+        self._log('toggle_light_callback()', 'Toggle light from button press')
         self.lights.toggle_lights()
 
     def rabbit_listener(self):
+        self._log('rabbit_listener()')
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             host='localhost'))
         channel = connection.channel()
@@ -81,7 +82,7 @@ class Aurora(object):
         channel.start_consuming()
 
     def rabbit_callback(self, ch, method, properties, body):
-        self._log('rabbit_callback', 'Message received from web app: "' + str(body) + '"')
+        self._log('rabbit_callback()', 'Message received from web app: "' + str(body) + '"')
         print " [x] Received %r" % (body,)
         self._log(body)
         self.lights.toggle_lights()
@@ -93,7 +94,7 @@ class Aurora(object):
 
     # Creates a Timer thread for the next alarm
     def set_alarm(self):
-        self._log('set_alarm')
+        self._log('set_alarm()')
         # Get next alarm
         next_alarm = self.get_next_alarm()
         print 'Sunrise:', next_alarm['sunrise']['end_time']
@@ -112,7 +113,7 @@ class Aurora(object):
     # Setup dawn transition
     # Create a thread for sunrise
     def trigger_dawn(self):
-        self._log('trigger_dawn')
+        self._log('trigger_dawn()')
         print 'trigger_dawn'
 
         duration = self.next_alarm['dawn']['duration']
@@ -127,7 +128,7 @@ class Aurora(object):
     # Setup sunrise transition
     # Create a thread for day
     def trigger_sunrise(self):
-        self._log('trigger_sunrise')
+        self._log('trigger_sunrise()')
         print 'trigger_sunrise'
 
         duration = self.next_alarm['sunrise']['duration']
@@ -143,7 +144,7 @@ class Aurora(object):
 
     # Execute day routine (shut lights off)
     def trigger_autoshutoff(self):
-        self._log('trigger_autoshutoff')
+        self._log('trigger_autoshutoff()')
         print 'turning lights off'
 
         self.lights.shutoff(self.SHUTOFF_DURATION)
@@ -153,7 +154,7 @@ class Aurora(object):
 
     # Returns the number of seconds until an event
     def seconds_till_alarm(self, end_time, start_time=False):
-        self._log('seconds_till_alarm', end_time)
+        self._log('seconds_till_alarm()', end_time)
         if not start_time:
             start_time = datetime.datetime.now()
 
@@ -169,7 +170,7 @@ class Aurora(object):
     # 5 Friday
     # 6 Saturday
     def get_alarm_for_day_number(self, day_number):
-        self._log('get_alarm_for_day_number', day_number)
+        self._log('get_alarm_for_day_number()', day_number)
         day_number = int(day_number)
         if day_number > 6:
             day_number = 0
@@ -207,7 +208,7 @@ class Aurora(object):
         return {'dawn': dawn, 'sunrise': sunrise, 'day': day}
 
     def get_today_alarm(self):
-        self._log('get_today_alarm')
+        self._log('get_today_alarm()')
         now = datetime.datetime.now()
         day_number = now.strftime("%w")
 
@@ -217,6 +218,7 @@ class Aurora(object):
 
     # Gets next alarm (typically tomorrow's)
     def get_next_alarm(self):
+        self._log('get_next_alarm()')
         now = datetime.datetime.now()
         today_alarm = self.get_today_alarm()
 
@@ -261,7 +263,7 @@ class Aurora(object):
         # self.lights.shutdown()
 
     def _log(self, method_name, message=None):
-        log_line = str(method_name) + '()'
+        log_line = str(method_name)
 
         if message:
             log_line += ': ' + str(message)
