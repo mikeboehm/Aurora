@@ -27,13 +27,6 @@ class Settings(object):
         self.logger.log('set_settings')
         self.settings = settings
 
-    def get_settings_from_json(self):
-        self.logger.log('get_settings_from_json 1')
-        try:
-            return self.JsonClient.get(self.url)
-        except IOError:
-            return false
-
     def refresh_settings(self):
         self.logger.log('refresh_settings')
         settings = self.get_settings_from_json()
@@ -47,7 +40,7 @@ class Settings(object):
         return settings
 
     def get_settings_from_json(self):
-        self.logger.log('get_settings_from_json 2')
+        self.logger.log('get_settings_from_json')
         try:
             settings = self.JsonClient.get(self.url)
         except IOError:
