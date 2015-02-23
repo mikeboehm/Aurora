@@ -18,7 +18,7 @@ class Logger(object):
         print self.__location__
 
     def log(self, method_name, message=None):
-        log_line = method_name + '()'
+        log_line = str(method_name)
 
         if message:
             log_line += ': ' + str(message)
