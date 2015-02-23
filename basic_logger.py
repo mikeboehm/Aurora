@@ -9,11 +9,21 @@ class Logger(object):
 
     log_filename = '/logs/all_events.log'
 
-    def __init__(self):
+    def __init__(self, class_name = None):
+        self.class_name = class_name
+
         print self.__location__
         print self.__location__
         print self.__location__
         print self.__location__
+
+    def log(self, method_name, message=None):
+        log_line = method_name + '()'
+
+        if message:
+            log_line += ': ' + str(message)
+
+        self.write(log_line, self.class_name)
 
     def write(self, log_record, class_name=None):
         log_file = self.__location__ + self.log_filename
