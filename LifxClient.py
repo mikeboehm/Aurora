@@ -1,11 +1,11 @@
 import json
 import datetime
-from dateutil import parser
-from Globe import Globe
+# from Globe import Globe
 from lifx_factory import LifxFactory
 
-from lifx_globe import LifxGlobe
-from hsbk_color import HSBKColor
+# from lifx_globe import LifxGlobe
+# from hsbk_color import HSBKColor
+
 
 class LifxClient(object):
     # BASE_URL = 'http://lifx-http.local:56780'
@@ -34,7 +34,9 @@ class LifxClient(object):
         try:
             response = self.request_handler.put(url, payload)
             json_response = self.convert_response(response)
+
             if response.status_code == 500:
+                self.get_last_seen()
 
         except Exception as e:
             print '*' * 20
@@ -92,24 +94,6 @@ class LifxClient(object):
         lights_dict_array = json.loads(response_text)
 
         return LifxFactory.create_bulb_collection(lights_dict_array)
-
-    # def light_factory(self, lights_dict_array):
-    #     lights = []
-    #     for light_dict in lights_dict_array:
-    #         id = light_dict['id']
-    #         label = light_dict['label']
-    #         site_id = light_dict['site_id']
-    #         tags = light_dict['tags']
-    #         on = light_dict['on']
-    #         color = light_dict['color']
-    #
-    #         last_seen = parser.parse(light_dict['last_seen'])
-    #         seconds_since_seen = light_dict['seconds_since_seen']
-    #
-    #         color = HSBKColor(color['hue'], color['saturation'], color['brightness'], color['kelvin'])
-    #
-    #         light = LifxGlobe(id, label, site_id, tags, on, color, last_seen, seconds_since_seen)
-    #         lights.append(light)
 
     def get_last_seen(self):
         self._log('get_last_seen()')
