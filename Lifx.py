@@ -41,16 +41,16 @@ class Lifx(object):
     }
 
     PRE_READING_LIGHT = {
-        'hue': 29,
-        'saturation': 1,
+        'hue': 48.45044632639048,
+        'saturation': 1.0,
         'brightness': 0,
         'kelvin': 2500
     }
     
     READING_LIGHT = {
-        'hue': 29,
-        'saturation': 1,
-        'brightness': 1,
+        'hue': 48.45044632639048,
+        'saturation': 1.0,
+        'brightness': 0.5032120241092546,
         'kelvin': 2500
     }
 
