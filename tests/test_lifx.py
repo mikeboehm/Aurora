@@ -1,36 +1,21 @@
 from unittest import TestCase
-from mock import MagicMock
 import requests
+import time
 from Lifx import Lifx
 from LifxClient import LifxClient
+from fake_logger import FakeLogger
 
 __author__ = 'mike'
 
 
 class TestLifx(TestCase):
     def setUp(self):
-        lifx_client = LifxClient(requests)
-        # lifx_client = MagicMock()
-        self.lifx = Lifx(lifx_client)
-
-    def tearDown(self):
-        self.lifx.fade(self.lifx.NIGHT, 1)
-
-    # def testSetLastSeen(self):
-    #     from datetime import datetime
-    #     now = datetime.utcnow()
-    #     print now.strftime('%Y-%m-%dT%H:%M:%S.%f %Z')
-    #
-    #     # self.lifx.set_last_seen()
-    #
-    #     # tester = datetime.strptime('2014-12-06T23:16:25.875+00:00', '%Y-%m-%dT%H:%M:%S%f%Z')
-    #     tester = datetime.strptime('2014-12-06T23:16:25.875+00:00', '%Y-%m-%dT%H:%M:%S.%f+00:00')
-    #     print tester
-
+        logger = FakeLogger()
+        lifx_client = LifxClient(requests, logger)
+        self.lifx = Lifx(lifx_client, logger)
 
     def test_dawn(self):
-        response = self.lifx.reading_lights_on()
-        self.assertTrue(response)
+        self.fail()
 
     def test_sunrise(self):
         self.fail()
@@ -38,14 +23,24 @@ class TestLifx(TestCase):
     def test_shutoff(self):
         self.fail()
 
-    def test_readinglights_on(self):
-        response = self.lifx.reading_lights_on()
-        self.assertTrue(response)
+    def test_threaded_toggle(self):
+        self.lifx.threaded_toggle()
+        print 'lights_are_on: ', self.lifx.lights_are_on
+        print 'Now sleeping'
+        time.sleep(5)
+        print 'Done sleeping'
 
-    def test_readinglights_off(self):
-        response = self.lifx.reading_lights_off()
-        self.assertTrue(response)
+        self.lifx.threaded_toggle()
+        print 'lights_are_on:', self.lifx.lights_are_on
 
-    def test_readinglights_toggle(self):
-        response = self.lifx.readinglights_toggle()
-        self.assertTrue(response)
+    def test_reading_lights_on(self):
+        self.fail()
+
+    def test_reading_lights_off(self):
+        self.fail()
+
+    def test_reading_lights_toggle(self):
+        self.fail()
+
+    def test__log(self):
+        self.fail()

@@ -5,6 +5,7 @@ import time
 import datetime
 from LifxClient import LifxClient
 from Globe import Globe
+from fake_logger import FakeLogger
 
 __author__ = 'mike'
 
@@ -12,7 +13,8 @@ class TestLifxClient(TestCase):
     def setUp(self):
         # request = MagicMock()
         request = requests
-        self.lifx = LifxClient(request)
+        logger = FakeLogger()
+        self.lifx = LifxClient(request, logger)
 
     def test_toggle(self):
         current_state = self.lifx.get_lights()
@@ -164,3 +166,12 @@ class TestLifxClient(TestCase):
         self.assertIsInstance(response[0], Globe)
         self.assertFalse(response[0].get_light_state())
         self.assertIsNotNone(response[0].get_color())
+
+    def test_get(self):
+        url = 'http://httpbin.org/status/200'
+        """
+        :type response: requests.Response
+        """
+        response = self.lifx.request_handler.get(url)
+
+        self.assertEquals(200, response.status_code)

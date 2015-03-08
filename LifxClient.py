@@ -25,7 +25,6 @@ class LifxClient(object):
         :type request_handler: requests
         """
         self.request_handler = request_handler
-
         self.logger = logger
         self._log('init()')
 
@@ -93,12 +92,15 @@ class LifxClient(object):
 
         lights_dict_array = json.loads(response_text)
 
-        return LifxFactory.create_bulb_collection(lights_dict_array)
+        factory = LifxFactory()
+
+        return factory.create_bulb_collection(lights_dict_array)
 
     def get_last_seen(self):
         self._log('get_last_seen()')
         lights_dict_array = self.get_lights()
-        lights = LifxFactory.create_bulb_collection(lights_dict_array)
+        factory = LifxFactory()
+        lights = factory.create_bulb_collection(lights_dict_array)
 
         for light in lights:
             print light.id, light.seconds_since_seen()

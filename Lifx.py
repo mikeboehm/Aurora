@@ -67,6 +67,8 @@ class Lifx(object):
     reading_light_duration = 2
     client_thread = ''
 
+    lights_are_on = False
+
     """
     :type lifx_client: LifxClient
     """
@@ -95,6 +97,7 @@ class Lifx(object):
     
     def reading_lights_on(self):
         self._log('reading_lights_on()')
+
         self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)
         self.client.turn_on()
         self.client.fade(self.READING_LIGHT, self.reading_light_duration)
@@ -103,6 +106,20 @@ class Lifx(object):
         self._log('reading_lights_off()')
         self.client.fade(self.PRE_READING_LIGHT, self.reading_light_duration)
         self.client.turn_off()
+
+    def threaded_toggle(self):
+        self._log('threaded_toggle()')
+        if self.lights_are_on:
+            self._log('lights_are_on = True')
+            target_method = self.reading_lights_off
+            self.lights_are_on = False
+        else:
+            self._log('lights_are_on = False')
+            target_method = self.reading_lights_on
+            self.lights_are_on = True
+
+        self.client_thread = Thread(target=target_method)
+        self.client_thread.start()
 
     def reading_lights_toggle(self):
         self._log('reading_lights_toggle()')

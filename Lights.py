@@ -32,7 +32,7 @@ class Lights(object):
     def toggle_lights(self):
         self._log('toggle_lights()')
         print 'Toggle lights'
-        self.light_adapter.reading_lights_toggle()
+        self.light_adapter.threaded_toggle()
 
     def dawn(self, duration):
         self._log('dawn()')
