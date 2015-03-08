@@ -176,7 +176,7 @@ class Aurora(object):
         now = datetime.datetime.now()
         today_number = int(now.strftime("%w"))
 
-        alarm = self.settings.get_alarm_for_day(today_number)
+        alarm = self.settings.get_alarm_for_day(day_number)
 
         hour = alarm['hour']
         minutes = alarm['minutes']
