@@ -1,14 +1,12 @@
 import socket
 from time import sleep
 
-from basic_logger import Logger
-
 
 class Settings(object):
-    def __init__(self, JsonClient):
+    def __init__(self, JsonClient, Logger):
         self.JsonClient = JsonClient
 
-        self.logger = Logger('Settings')
+        self.logger = Logger
 
         hostname = self.get_hostname()
         port = 5000
@@ -20,15 +18,15 @@ class Settings(object):
         self.settings = self.refresh_settings()
 
     def get_settings(self):
-        self.logger.log('get_settings()')
+        self._log('get_settings()')
         return self.settings
 
     def set_settings(self, settings):
-        self.logger.log('set_settings()')
+        self._log('set_settings()')
         self.settings = settings
 
     def refresh_settings(self):
-        self.logger.log('refresh_settings()')
+        self._log('refresh_settings()')
         settings = self.get_settings_from_json()
 
         while not settings:
@@ -39,21 +37,23 @@ class Settings(object):
         self.set_settings(settings)
         return settings
 
+    # Used
     def get_settings_from_json(self):
-        self.logger.log('get_settings_from_json()')
+        self._log('get_settings_from_json()')
         try:
             settings = self.JsonClient.get(self.url)
         except IOError:
             settings = False
         return settings
 
+    # Will be used
     def get_alarms(self):
-        self.logger.log('get_alarms()')
+        self._log('get_alarms()')
         settings = self.get_settings()
         return settings['settings']['alarms']
 
     def get_alarm_for_day(self, day_number):
-        self.logger.log('get_alarm_for_day()')
+        self._log('get_alarm_for_day()')
         alarms = self.get_alarms()
         day_number_string = str(day_number)
 
@@ -62,7 +62,7 @@ class Settings(object):
         return self.parse_time_string(alarm_string)
 
     def parse_time_string(self, string):
-        self.logger.log('parse_time_string()')
+        self._log('parse_time_string()')
         alarm = string.split(':')
 
         hour = int(alarm[0])
@@ -71,7 +71,7 @@ class Settings(object):
         return {'hour': hour, 'minutes': minutes}
 
     def get_hostname(self):
-        self.logger.log('get_hostname()')
+        self._log('get_hostname()')
         # Generate hostname
         bonjour_address = socket.gethostname()
         # If IP address, use as is
@@ -83,3 +83,11 @@ class Settings(object):
                 bonjour_address += '.local'
 
         return bonjour_address
+
+    def _log(self, method_name, message=None):
+        log_line = str(method_name)
+
+        if message:
+            log_line += ': ' + str(message)
+
+        self.logger.write(log_line, 'Settings')

@@ -33,7 +33,7 @@ if __name__ == '__main__':
         lights = Lights(lifx, logger)
 
         jsonClient = JsonClient()
-        settings = Settings(jsonClient)
+        settings = Settings(jsonClient, logger)
 
         button_controller = ButtonController(BUTTON_PIN)
         # mock_button_controller = MockButtonController()
