@@ -7,15 +7,13 @@ class Logger(object):
         os.path.join(os.getcwd(), os.path.dirname(__file__))
     )
 
-    log_filename = '/logs/all_events.log'
-
-    def __init__(self, class_name = None):
+    def __init__(self, class_name = None, filename='all_events.log', log_dir='logs'):
         self.class_name = class_name
+        self.filename = filename
+        self.log_dir = log_dir
 
-        print self.__location__
-        print self.__location__
-        print self.__location__
-        print self.__location__
+    def get_log_file_path(self):
+        return os.path.join(self.__location__, self.log_dir, self.filename)
 
     def log(self, method_name, message=None):
         log_line = str(method_name)
@@ -26,9 +24,7 @@ class Logger(object):
         self.write(log_line, self.class_name)
 
     def write(self, log_record, class_name=None):
-        log_file = self.__location__ + self.log_filename
-
-        all_events = open(log_file, 'a')
+        all_events = open(self.get_log_file_path(), 'a')
         now = datetime.now()
 
         if class_name:
