@@ -175,3 +175,15 @@ class TestLifxClient(TestCase):
         response = self.lifx.request_handler.get(url)
 
         self.assertEquals(200, response.status_code)
+
+    def test_do_put(self):
+        request_client = MagicMock()
+        response = MagicMock()
+
+        response.status_code = '500'
+        request_client.put.return_value = response
+
+        logger = FakeLogger()
+        lifx_client = LifxClient(request_client, logger)
+
+        lifx_client.do_put('url')

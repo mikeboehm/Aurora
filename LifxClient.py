@@ -32,9 +32,12 @@ class LifxClient(object):
         self._log('do_put()')
         try:
             response = self.request_handler.put(url, payload)
+
             json_response = self.convert_response(response)
 
-            if response.status_code == 500:
+            if int(response.status_code) == 500:
+                self._log('if (int)response.status_code == 500:')
+                self._log(response.json())
                 self.get_last_seen()
 
         except Exception as e:
@@ -42,7 +45,7 @@ class LifxClient(object):
             print e.message
             print '*' * 20
 
-        return False
+            return False
 
     def do_get(self, url):
         self._log('do_get()')
@@ -90,11 +93,14 @@ class LifxClient(object):
         self._log(response.status_code)
         self._log(response_text)
 
-        lights_dict_array = json.loads(response_text)
+        try:
+            lights_dict_array = json.loads(response_text)
+            factory = LifxFactory()
+            return factory.create_bulb_collection(lights_dict_array)
 
-        factory = LifxFactory()
-
-        return factory.create_bulb_collection(lights_dict_array)
+        except Exception:
+            self._log('convert_json throw exception')
+            return {}
 
     def get_last_seen(self):
         self._log('get_last_seen()')
