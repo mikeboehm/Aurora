@@ -93,12 +93,12 @@ class Lifx(object):
         self._log('shutoff()')
         self.client.fade(self.PRE_DAY, shutoff_speed)
         self.client.turn_off()
-        self.client.fade(self.READING_LIGHT, self.pre_fade_duration)
+        self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)
     
     def reading_lights_on(self):
         self._log('reading_lights_on()')
 
-        self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)
+        # self.client.fade(self.PRE_READING_LIGHT, self.pre_fade_duration)
         self.client.turn_on()
         self.client.fade(self.READING_LIGHT, self.reading_light_duration)
 
