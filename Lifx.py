@@ -65,6 +65,7 @@ class Lifx(object):
 
     pre_fade_duration = 0
     reading_light_duration = 2
+    reading_light_off_duration = 60 * 5
     client_thread = ''
 
     lights_are_on = False
@@ -104,7 +105,7 @@ class Lifx(object):
 
     def reading_lights_off(self):
         self._log('reading_lights_off()')
-        self.client.fade(self.PRE_READING_LIGHT, self.reading_light_duration)
+        self.client.fade(self.PRE_READING_LIGHT, self.reading_light_off_duration)
         self.client.turn_off()
 
     def threaded_toggle(self):
