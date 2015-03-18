@@ -65,7 +65,8 @@ class Lifx(object):
 
     pre_fade_duration = 0
     reading_light_duration = 2
-    reading_light_off_duration = 60 * 5
+    # reading_light_off_duration = 60 * 5
+    reading_light_off_duration = 2
     client_thread = ''
 
     lights_are_on = False
