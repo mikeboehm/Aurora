@@ -84,7 +84,7 @@ class Aurora(object):
         self._log('rabbit_callback()', 'Message received from web app: "' + str(body) + '"')
         print " [x] Received %r" % (body,)
         self._log(body)
-        self.lights.toggle_lights()
+        self.toggle_light_callback()
 
     # Returns settings from config
     def get_settings(self):

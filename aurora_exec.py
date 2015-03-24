@@ -20,7 +20,7 @@ location = os.path.realpath(
 os.system('clear')
 os.system('sudo nohup /usr/local/bin/lifx-http >> ' + location + '/logs/lifx-http.log &')
 
-BUTTON_PIN = 17
+BUTTON_PIN = 23
 
 if __name__ == '__main__':
     try:
