@@ -20,6 +20,8 @@ location = os.path.realpath(
 os.system('clear')
 os.system('sudo nohup /usr/local/bin/lifx-http >> ' + location + '/logs/lifx-http.log &')
 
+# Mike: Pin 24
+# Milly: Pin 23
 BUTTON_PIN = 23
 
 if __name__ == '__main__':
@@ -53,4 +55,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print '#' * 10 + ' Exiting ' + '#' * 10
         aurora.shutdown()
-
